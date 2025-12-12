@@ -45,6 +45,47 @@ class User
         return $stmt->fetchAll();
     }
 
+    public function updateProfile(int $id, array $data): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE users SET full_name = :full_name, phone = :phone, updated_at = NOW() WHERE id = :id');
+        return $stmt->execute([
+            ':id' => $id,
+            ':full_name' => $data['full_name'],
+            ':phone' => $data['phone'] ?? null,
+        ]);
+    }
+
+    public function updatePassword(int $id, string $passwordHash): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE users SET password_hash = :password_hash, updated_at = NOW() WHERE id = :id');
+        return $stmt->execute([
+            ':id' => $id,
+            ':password_hash' => $passwordHash,
+        ]);
+    }
+
+    public function paginateByRole(string $role, string $keyword = '', int $page = 1, int $perPage = 10): array
+    {
+        $offset = ($page - 1) * $perPage;
+        $like = '%' . $keyword . '%';
+
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE role = :role AND (full_name LIKE :keyword OR email LIKE :keyword)');
+        $stmt->execute([':role' => $role, ':keyword' => $like]);
+        $total = (int)$stmt->fetchColumn();
+
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE role = :role AND (full_name LIKE :keyword OR email LIKE :keyword) ORDER BY created_at DESC LIMIT :limit OFFSET :offset');
+        $stmt->bindValue(':role', $role, PDO::PARAM_STR);
+        $stmt->bindValue(':keyword', $like, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data' => $stmt->fetchAll(),
+            'total' => $total,
+        ];
+    }
+
     public function countAll(): int
     {
         $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM users');

@@ -62,6 +62,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    document.querySelectorAll('.appointment-update-form').forEach((form) => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = Object.fromEntries(new FormData(form).entries());
+            payload.id = form.dataset.id;
+            const res = await apiFetch('/api/appointment_status.php', { method: 'POST', body: JSON.stringify(payload) });
+            showModal(res.status === 'success' ? 'Đã cập nhật' : 'Lỗi', res.message);
+        });
+    });
+
+    const profileForm = document.getElementById('patient-profile-form');
+    if (profileForm) {
+        profileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = Object.fromEntries(new FormData(profileForm).entries());
+            payload.action = 'update_profile';
+            const res = await apiFetch('/api/profile.php', { method: 'POST', body: JSON.stringify(payload) });
+            showModal(res.status === 'success' ? 'Đã lưu' : 'Lỗi', res.message);
+        });
+    }
+
+    const passwordForm = document.getElementById('password-form');
+    if (passwordForm) {
+        passwordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = Object.fromEntries(new FormData(passwordForm).entries());
+            payload.action = 'change_password';
+            const res = await apiFetch('/api/profile.php', { method: 'POST', body: JSON.stringify(payload) });
+            showModal(res.status === 'success' ? 'Thành công' : 'Lỗi', res.message);
+            if (res.status === 'success') {
+                passwordForm.reset();
+            }
+        });
+    }
+
     if (window.jQuery) {
         $('#service-table').DataTable();
         $('#article-table').DataTable();
