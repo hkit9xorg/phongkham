@@ -1,0 +1,74 @@
+<?php
+
+class Appointment
+{
+    private \PDO $pdo;
+
+    public function __construct(\PDO $pdo)
+    {
+        $this->pdo = $pdo;
+    }
+
+    public function create(array $data): int
+    {
+        $stmt = $this->pdo->prepare('INSERT INTO appointments (customer_id, doctor_id, service_id, full_name, phone, email, appointment_date, status, type, notes, reschedule_request, created_at, updated_at) VALUES (:customer_id, :doctor_id, :service_id, :full_name, :phone, :email, :appointment_date, :status, :type, :notes, :reschedule_request, NOW(), NOW())');
+        $stmt->execute([
+            ':customer_id' => $data['customer_id'] ?? null,
+            ':doctor_id' => $data['doctor_id'] ?? null,
+            ':service_id' => $data['service_id'] ?? null,
+            ':full_name' => $data['full_name'],
+            ':phone' => $data['phone'],
+            ':email' => $data['email'] ?? null,
+            ':appointment_date' => $data['appointment_date'],
+            ':status' => $data['status'] ?? 'pending',
+            ':type' => $data['type'] ?? 'standard',
+            ':notes' => $data['notes'] ?? null,
+            ':reschedule_request' => $data['reschedule_request'] ?? null,
+        ]);
+        return (int)$this->pdo->lastInsertId();
+    }
+
+    public function listForUser(int $userId): array
+    {
+        $stmt = $this->pdo->prepare("SELECT a.*, s.name AS service_name, d.full_name AS doctor_name FROM appointments a LEFT JOIN services s ON a.service_id = s.id LEFT JOIN users d ON a.doctor_id = d.id WHERE a.customer_id = :customer_id ORDER BY a.appointment_date DESC");
+        $stmt->execute([':customer_id' => $userId]);
+        return $stmt->fetchAll();
+    }
+
+    public function listForDoctor(int $doctorId): array
+    {
+        $stmt = $this->pdo->prepare("SELECT a.*, s.name AS service_name, c.full_name AS customer_name FROM appointments a LEFT JOIN services s ON a.service_id = s.id LEFT JOIN users c ON a.customer_id = c.id WHERE a.doctor_id = :doctor_id ORDER BY a.appointment_date DESC");
+        $stmt->execute([':doctor_id' => $doctorId]);
+        return $stmt->fetchAll();
+    }
+
+    public function all(): array
+    {
+        $sql = "SELECT a.*, s.name AS service_name, c.full_name AS customer_name, d.full_name AS doctor_name FROM appointments a
+                LEFT JOIN services s ON a.service_id = s.id
+                LEFT JOIN users c ON a.customer_id = c.id
+                LEFT JOIN users d ON a.doctor_id = d.id
+                ORDER BY a.appointment_date DESC";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll();
+    }
+
+    public function updateStatus(int $id, array $data): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE appointments SET status = :status, doctor_id = :doctor_id, appointment_date = :appointment_date, notes = :notes, updated_at = NOW() WHERE id = :id');
+        return $stmt->execute([
+            ':id' => $id,
+            ':status' => $data['status'],
+            ':doctor_id' => $data['doctor_id'] ?? null,
+            ':appointment_date' => $data['appointment_date'] ?? null,
+            ':notes' => $data['notes'] ?? null,
+        ]);
+    }
+
+    public function count(): int
+    {
+        $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM appointments');
+        $row = $stmt->fetch();
+        return (int)($row['total'] ?? 0);
+    }
+}
