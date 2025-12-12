@@ -146,6 +146,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const initSliders = () => {
+        document.querySelectorAll('[data-auto-slider]').forEach((slider) => {
+            const slides = slider.querySelectorAll('[data-slide]');
+            if (!slides.length) return;
+
+            const track = slider.querySelector('[data-track]');
+            let activeIndex = Array.from(slides).findIndex((slide) => slide.hasAttribute('data-active'));
+            activeIndex = activeIndex >= 0 ? activeIndex : 0;
+            const interval = parseInt(slider.dataset.interval || '4000', 10);
+
+            const setActive = (index) => {
+                activeIndex = (index + slides.length) % slides.length;
+                slides.forEach((slide, idx) => {
+                    if (idx === activeIndex) {
+                        slide.setAttribute('data-active', '');
+                    } else {
+                        slide.removeAttribute('data-active');
+                    }
+                });
+
+                if (track) {
+                    const target = slides[activeIndex];
+                    const offset = target?.offsetLeft || 0;
+                    track.scrollTo({ left: offset, behavior: 'smooth' });
+                }
+            };
+
+            const next = () => setActive(activeIndex + 1);
+            const prev = () => setActive(activeIndex - 1);
+
+            slider.querySelectorAll('[data-next]').forEach((btn) => btn.addEventListener('click', next));
+            slider.querySelectorAll('[data-prev]').forEach((btn) => btn.addEventListener('click', prev));
+
+            if (slider.id) {
+                document.querySelectorAll(`[data-target="${slider.id}"][data-next]`).forEach((btn) => btn.addEventListener('click', next));
+                document.querySelectorAll(`[data-target="${slider.id}"][data-prev]`).forEach((btn) => btn.addEventListener('click', prev));
+            }
+
+            setActive(activeIndex);
+            setInterval(next, interval);
+        });
+    };
+
+    initSliders();
+
     if (window.jQuery) {
         $('#service-table').DataTable();
         $('#article-table').DataTable();
