@@ -10,7 +10,7 @@ $user = $_SESSION['user'] ?? null;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($title ?? 'Tin tức đa người dùng') ?></title>
+    <title><?= htmlspecialchars($title ?? 'Phòng khám nha khoa') ?></title>
     <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::token()) ?>">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.5/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
@@ -20,13 +20,16 @@ $user = $_SESSION['user'] ?? null;
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <body class="bg-base-200 min-h-screen">
-    <div class="navbar bg-base-100 shadow">
+    <div class="navbar bg-base-100 shadow sticky top-0 z-20">
         <div class="flex-1">
-            <a href="<?= $baseUrl ?>/index.php" class="btn btn-ghost normal-case text-xl"><i class="ri-newspaper-line mr-2"></i>Tin tức</a>
+            <a href="<?= $baseUrl ?>/index.php" class="btn btn-ghost normal-case text-xl"><i class="ri-hospital-line mr-2"></i>SmileCare Clinic</a>
+            <a href="<?= $baseUrl ?>/index.php#services" class="btn btn-ghost">Dịch vụ</a>
+            <a href="<?= $baseUrl ?>/index.php#articles" class="btn btn-ghost">Bài viết</a>
+            <a href="<?= $baseUrl ?>/index.php#booking" class="btn btn-ghost">Đặt lịch</a>
         </div>
         <div class="flex-none gap-2">
             <?php if ($user): ?>
-                <a class="btn btn-sm btn-primary" href="<?= $baseUrl ?>/index.php?page=editor"><i class="ri-quill-pen-line mr-1"></i>Soạn bài</a>
+                <a class="btn btn-sm btn-primary" href="<?= $baseUrl ?>/index.php?page=dashboard"><i class="ri-dashboard-line mr-1"></i>Dashboard</a>
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" class="btn btn-ghost btn-circle avatar">
                         <div class="w-10 rounded-full">
@@ -35,13 +38,12 @@ $user = $_SESSION['user'] ?? null;
                     </label>
                     <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                         <li class="menu-title"><?= htmlspecialchars($user['name']) ?> (<?= htmlspecialchars($user['role']) ?>)</li>
-                        <li><a href="#"><i class="ri-notification-2-line"></i>Thông báo</a></li>
-                        <li><a href="#"><i class="ri-bookmark-line"></i>Bookmarks</a></li>
                         <li><a href="<?= $baseUrl ?>/index.php?page=logout"><i class="ri-logout-circle-r-line"></i>Đăng xuất</a></li>
                     </ul>
                 </div>
             <?php else: ?>
                 <a class="btn btn-ghost" href="<?= $baseUrl ?>/index.php?page=login"><i class="ri-login-circle-line mr-2"></i>Đăng nhập</a>
+                <a class="btn btn-primary" href="<?= $baseUrl ?>/index.php?page=register"><i class="ri-user-add-line mr-2"></i>Đăng ký</a>
             <?php endif; ?>
         </div>
     </div>

@@ -1,0 +1,78 @@
+openapi: 3.0.3
+title: SmileCare Clinic API
+version: 1.0.0
+paths:
+  /api/appointments.php:
+    post:
+      summary: Tạo yêu cầu đặt lịch hẹn (công khai hoặc đã đăng nhập)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                csrf_token: { type: string }
+                full_name: { type: string }
+                phone: { type: string }
+                email: { type: string }
+                service_id: { type: integer }
+                appointment_date: { type: string, format: date-time }
+                notes: { type: string }
+      responses:
+        '200':
+          description: JSON phản hồi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string }
+                  message: { type: string }
+                  data: { type: object }
+  /api/services.php:
+    post:
+      summary: Admin tạo dịch vụ nha khoa
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                csrf_token: { type: string }
+                name: { type: string }
+                description: { type: string }
+                price: { type: number }
+                is_active: { type: integer }
+      responses:
+        '200':
+          description: Kết quả
+  /api/articles.php:
+    post:
+      summary: Admin/Bác sĩ tạo bài viết tư vấn
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                csrf_token: { type: string }
+                title: { type: string }
+                content: { type: string }
+                category: { type: string }
+                status: { type: string }
+      responses:
+        '200':
+          description: Kết quả
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: PHPSESSID

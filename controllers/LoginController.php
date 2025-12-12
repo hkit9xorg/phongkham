@@ -22,17 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$errors) {
         $userModel = new User($pdo);
         $user = $userModel->findByEmail($email);
-        if (!$user || !password_verify($password, $user['password'])) {
+        if (!$user || !password_verify($password, $user['password_hash'])) {
             $errors[] = 'Thông tin đăng nhập không đúng.';
+        } elseif ((int)$user['is_active'] !== 1) {
+            $errors[] = 'Tài khoản đang bị khóa.';
         } else {
             $_SESSION['user'] = [
                 'id' => $user['id'],
-                'name' => $user['name'],
+                'name' => $user['full_name'],
                 'email' => $user['email'],
                 'role' => $user['role'],
             ];
             $_SESSION['flash'] = 'Đăng nhập thành công.';
-            header('Location: /index.php');
+            header('Location: /index.php?page=dashboard');
             exit;
         }
     }

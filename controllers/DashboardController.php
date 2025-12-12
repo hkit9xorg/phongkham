@@ -4,15 +4,21 @@ require_once __DIR__ . '/../models/Service.php';
 require_once __DIR__ . '/../models/Article.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Appointment.php';
+require_once __DIR__ . '/../models/DoctorSchedule.php';
 require_once __DIR__ . '/../helpers/Csrf.php';
+require_once __DIR__ . '/../helpers/Auth.php';
+
+$user = Auth::user();
+if (!$user) {
+    header('Location: /index.php?page=login');
+    exit;
+}
 
 $serviceModel = new Service($pdo);
 $articleModel = new Article($pdo);
 $userModel = new User($pdo);
 $appointmentModel = new Appointment($pdo);
-
-$services = $serviceModel->allActive();
-$articles = $articleModel->published();
+$scheduleModel = new DoctorSchedule($pdo);
 
 $stats = [
     'customers' => $userModel->countAll(),
@@ -21,8 +27,19 @@ $stats = [
     'appointments' => $appointmentModel->count(),
 ];
 
-$title = 'Phòng khám nha khoa - Trang chủ';
+$appointments = [];
+$doctorSchedules = [];
+if ($user['role'] === 'customer') {
+    $appointments = $appointmentModel->listForUser($user['id']);
+} elseif ($user['role'] === 'doctor') {
+    $appointments = $appointmentModel->listForDoctor($user['id']);
+    $doctorSchedules = $scheduleModel->listForDoctor($user['id']);
+} else {
+    $appointments = $appointmentModel->all();
+}
+
+$title = 'Dashboard';
 ob_start();
-include __DIR__ . '/../views/home.php';
+include __DIR__ . '/../views/dashboard.php';
 $content = ob_get_clean();
 include __DIR__ . '/../views/layout.php';

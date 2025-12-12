@@ -6,8 +6,8 @@ Env::load();
 $driver = Env::get('DB_CONNECTION', 'mysql');
 $host = Env::get('DB_HOST', '127.0.0.1');
 $port = Env::get('DB_PORT', '3306');
-$db = Env::get('DB_DATABASE', 'tintuc');
-$user = Env::get('DB_USERNAME', 'tintuc');
+$db = Env::get('DB_DATABASE', 'phongkham');
+$user = Env::get('DB_USERNAME', 'phongkham');
 $pass = Env::get('DB_PASSWORD', '');
 
 $dsn = sprintf('%s:host=%s;port=%s;dbname=%s;charset=utf8mb4', $driver, $host, $port, $db);
