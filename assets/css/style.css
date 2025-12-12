@@ -5,3 +5,55 @@ body {
 .table td, .table th {
     white-space: nowrap;
 }
+
+.ticker {
+    position: relative;
+    overflow: hidden;
+    height: 1.5rem;
+    max-width: 420px;
+}
+
+.ticker__track {
+    display: flex;
+    gap: 2rem;
+    position: absolute;
+    white-space: nowrap;
+    animation: ticker 20s linear infinite;
+}
+
+@keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.auto-slider [data-slide] {
+    display: none;
+}
+
+.auto-slider [data-slide][data-active] {
+    display: block;
+}
+
+.auto-slider .grid [data-slide] {
+    display: block;
+}
+
+.slider-track {
+    scroll-behavior: smooth;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.animate-bounce-subtle {
+    animation: bounce-subtle 2.2s infinite;
+}
+
+@keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}

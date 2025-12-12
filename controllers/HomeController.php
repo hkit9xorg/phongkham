@@ -13,12 +13,14 @@ $appointmentModel = new Appointment($pdo);
 
 $services = $serviceModel->allActive();
 $articles = $articleModel->published();
+$doctors = $userModel->listDoctors();
 
 $stats = [
     'customers' => $userModel->countAll(),
     'services' => $serviceModel->count(),
     'articles' => $articleModel->count(),
     'appointments' => $appointmentModel->count(),
+    'doctors' => count($doctors),
 ];
 
 $title = 'Phòng khám nha khoa - Trang chủ';
