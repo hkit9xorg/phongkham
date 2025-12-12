@@ -12,6 +12,9 @@ switch ($page) {
     case 'dashboard':
         require __DIR__ . '/controllers/DashboardController.php';
         break;
+    case 'admin':
+        require __DIR__ . '/controllers/AdminController.php';
+        break;
     case 'logout':
         session_destroy();
         header('Location: /index.php');

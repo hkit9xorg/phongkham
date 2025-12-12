@@ -21,6 +21,35 @@ class Article
         return $stmt->fetchAll();
     }
 
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT a.*, u.full_name AS author_name FROM articles a LEFT JOIN users u ON a.author_id = u.id WHERE a.id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    public function searchPaginated(string $keyword, int $page = 1, int $perPage = 10): array
+    {
+        $offset = ($page - 1) * $perPage;
+        $like = '%' . $keyword . '%';
+
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM articles WHERE title LIKE :keyword OR content LIKE :keyword');
+        $stmt->execute([':keyword' => $like]);
+        $total = (int)$stmt->fetchColumn();
+
+        $stmt = $this->pdo->prepare("SELECT a.*, u.full_name AS author_name FROM articles a LEFT JOIN users u ON a.author_id = u.id WHERE a.title LIKE :keyword OR a.content LIKE :keyword ORDER BY a.updated_at DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':keyword', $like, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data' => $stmt->fetchAll(),
+            'total' => $total,
+        ];
+    }
+
     public function create(array $data): int
     {
         $stmt = $this->pdo->prepare('INSERT INTO articles (title, content, category, status, author_id, created_at, updated_at) VALUES (:title, :content, :category, :status, :author_id, NOW(), NOW())');

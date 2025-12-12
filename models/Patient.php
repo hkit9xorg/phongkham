@@ -30,4 +30,17 @@ class Patient
         $patient = $stmt->fetch();
         return $patient ?: null;
     }
+
+    public function updateByUser(int $userId, array $data): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE patients SET dob = :dob, gender = :gender, address = :address, medical_history = :medical_history, allergies = :allergies, updated_at = NOW() WHERE user_id = :user_id');
+        return $stmt->execute([
+            ':user_id' => $userId,
+            ':dob' => $data['dob'] ?? null,
+            ':gender' => $data['gender'] ?? null,
+            ':address' => $data['address'] ?? null,
+            ':medical_history' => $data['medical_history'] ?? null,
+            ':allergies' => $data['allergies'] ?? null,
+        ]);
+    }
 }

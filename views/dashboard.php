@@ -89,6 +89,7 @@
 </section>
 <?php endif; ?>
 
+<?php $canUpdateAppointment = in_array($user['role'], ['admin', 'doctor'], true); ?>
 <section class="mb-10">
     <h2 class="text-2xl font-semibold mb-4"><i class="ri-calendar-line mr-2"></i>Danh sách lịch hẹn</h2>
     <div class="overflow-x-auto bg-base-100 p-4 rounded-box shadow">
@@ -96,6 +97,7 @@
             <thead>
                 <tr>
                     <th>Khách hàng</th><th>Dịch vụ</th><th>Ngày giờ</th><th>Trạng thái</th><th>Bác sĩ</th><th>Ghi chú</th>
+                    <?php if ($canUpdateAppointment): ?><th>Thao tác</th><?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -107,6 +109,24 @@
                         <td><?= htmlspecialchars($app['status']) ?></td>
                         <td><?= htmlspecialchars($app['doctor_name'] ?? '') ?></td>
                         <td><?= htmlspecialchars($app['notes'] ?? '') ?></td>
+                        <?php if ($canUpdateAppointment): ?>
+                            <td>
+                                <form class="appointment-update-form space-y-1" data-id="<?= $app['id'] ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+                                    <?php if ($user['role'] === 'doctor'): ?>
+                                        <input type="hidden" name="doctor_id" value="<?= (int)$user['id'] ?>">
+                                    <?php endif; ?>
+                                    <select name="status" class="select select-bordered select-sm w-full">
+                                        <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
+                                            <option value="<?= $st ?>" <?= ($app['status'] ?? '') === $st ? 'selected' : '' ?>><?= $st ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <input type="datetime-local" name="appointment_date" class="input input-bordered input-sm w-full" value="<?= isset($app['appointment_date']) ? date('Y-m-d\TH:i', strtotime($app['appointment_date'])) : '' ?>">
+                                    <textarea name="notes" rows="2" class="textarea textarea-bordered textarea-xs w-full" placeholder="Ghi chú"><?= htmlspecialchars($app['notes'] ?? '') ?></textarea>
+                                    <button type="submit" class="btn btn-primary btn-sm w-full"><i class="ri-save-line mr-1"></i>Cập nhật</button>
+                                </form>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -131,6 +151,72 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
+    </div>
+</section>
+<?php endif; ?>
+
+<?php if ($user['role'] === 'customer'): ?>
+<section class="mb-10 grid md:grid-cols-2 gap-4">
+    <div class="bg-base-100 p-4 rounded-box shadow">
+        <h2 class="text-2xl font-semibold mb-4"><i class="ri-user-heart-line mr-2"></i>Hồ sơ bệnh nhân</h2>
+        <form id="patient-profile-form" class="space-y-3">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+            <label class="form-control">
+                <span class="label-text">Họ và tên</span>
+                <input class="input input-bordered" name="full_name" required value="<?= htmlspecialchars($userDetails['full_name'] ?? $user['name']) ?>">
+            </label>
+            <label class="form-control">
+                <span class="label-text">Số điện thoại</span>
+                <input class="input input-bordered" name="phone" value="<?= htmlspecialchars($userDetails['phone'] ?? '') ?>">
+            </label>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="form-control">
+                    <span class="label-text">Ngày sinh</span>
+                    <input type="date" name="dob" class="input input-bordered" value="<?= htmlspecialchars($patientProfile['dob'] ?? '') ?>">
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Giới tính</span>
+                    <select name="gender" class="select select-bordered">
+                        <option value="">Không xác định</option>
+                        <option value="male" <?= ($patientProfile['gender'] ?? '') === 'male' ? 'selected' : '' ?>>Nam</option>
+                        <option value="female" <?= ($patientProfile['gender'] ?? '') === 'female' ? 'selected' : '' ?>>Nữ</option>
+                        <option value="other" <?= ($patientProfile['gender'] ?? '') === 'other' ? 'selected' : '' ?>>Khác</option>
+                    </select>
+                </label>
+            </div>
+            <label class="form-control">
+                <span class="label-text">Địa chỉ</span>
+                <input class="input input-bordered" name="address" value="<?= htmlspecialchars($patientProfile['address'] ?? '') ?>">
+            </label>
+            <label class="form-control">
+                <span class="label-text">Tiền sử bệnh</span>
+                <textarea class="textarea textarea-bordered" name="medical_history" rows="3"><?= htmlspecialchars($patientProfile['medical_history'] ?? '') ?></textarea>
+            </label>
+            <label class="form-control">
+                <span class="label-text">Dị ứng</span>
+                <textarea class="textarea textarea-bordered" name="allergies" rows="2"><?= htmlspecialchars($patientProfile['allergies'] ?? '') ?></textarea>
+            </label>
+            <button class="btn btn-primary" type="submit"><i class="ri-save-line mr-2"></i>Lưu hồ sơ</button>
+        </form>
+    </div>
+    <div class="bg-base-100 p-4 rounded-box shadow">
+        <h2 class="text-2xl font-semibold mb-4"><i class="ri-key-2-line mr-2"></i>Đổi mật khẩu</h2>
+        <form id="password-form" class="space-y-3">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+            <label class="form-control">
+                <span class="label-text">Mật khẩu hiện tại</span>
+                <input type="password" name="current_password" class="input input-bordered" required>
+            </label>
+            <label class="form-control">
+                <span class="label-text">Mật khẩu mới</span>
+                <input type="password" name="new_password" class="input input-bordered" required>
+            </label>
+            <label class="form-control">
+                <span class="label-text">Xác nhận mật khẩu mới</span>
+                <input type="password" name="confirm_password" class="input input-bordered" required>
+            </label>
+            <button class="btn btn-primary" type="submit"><i class="ri-lock-password-line mr-2"></i>Cập nhật mật khẩu</button>
+        </form>
     </div>
 </section>
 <?php endif; ?>

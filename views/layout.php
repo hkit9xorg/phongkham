@@ -29,6 +29,9 @@ $user = $_SESSION['user'] ?? null;
         </div>
         <div class="flex-none gap-2">
             <?php if ($user): ?>
+                <?php if (($user['role'] ?? '') === 'admin'): ?>
+                    <a class="btn btn-sm" href="<?= $baseUrl ?>/index.php?page=admin"><i class="ri-settings-5-line mr-1"></i>Quản trị</a>
+                <?php endif; ?>
                 <a class="btn btn-sm btn-primary" href="<?= $baseUrl ?>/index.php?page=dashboard"><i class="ri-dashboard-line mr-1"></i>Dashboard</a>
                 <div class="dropdown dropdown-end">
                     <label tabindex="0" class="btn btn-ghost btn-circle avatar">
