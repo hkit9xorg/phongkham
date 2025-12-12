@@ -34,6 +34,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 bookingForm.reset();
             }
         });
+
+        const appointmentInput = bookingForm.querySelector('input[name="appointment_date"]');
+        const slotContainer = document.getElementById('slot-suggestions');
+        const slotMeta = document.getElementById('suggest-meta');
+        const suggestBtn = document.getElementById('suggest-slot-btn');
+
+        const renderSlots = (slots = []) => {
+            if (!slotContainer) return;
+            slotContainer.innerHTML = '';
+            slots.forEach((slot) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-sm';
+                btn.textContent = `${slot.datetime.replace(' ', ' • ')}`;
+                btn.addEventListener('click', () => {
+                    if (appointmentInput) {
+                        appointmentInput.value = slot.datetime.replace(' ', 'T');
+                    }
+                });
+                slotContainer.appendChild(btn);
+            });
+        };
+
+        const loadSuggestions = async () => {
+            if (!suggestBtn) return;
+            suggestBtn.setAttribute('disabled', 'disabled');
+            suggestBtn.classList.add('loading');
+            const date = appointmentInput?.value ? appointmentInput.value.split('T')[0] : new Date().toISOString().slice(0, 10);
+            try {
+                const res = await apiFetch(`/api/availability.php?date=${date}`);
+                if (res.status === 'success') {
+                    slotMeta.textContent = `Bác sĩ: ${res.data.slots[0].doctor_name} - Ngày ${res.data.date}`;
+                    renderSlots(res.data.slots);
+                } else {
+                    slotMeta.textContent = res.message;
+                    renderSlots([]);
+                }
+            } catch (error) {
+                slotMeta.textContent = 'Không thể tải gợi ý.';
+                renderSlots([]);
+            } finally {
+                suggestBtn.removeAttribute('disabled');
+                suggestBtn.classList.remove('loading');
+            }
+        };
+
+        if (suggestBtn) {
+            suggestBtn.addEventListener('click', loadSuggestions);
+        }
     }
 
     const serviceForm = document.getElementById('service-form');

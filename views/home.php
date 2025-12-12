@@ -90,6 +90,11 @@
                     <div class="form-control">
                         <label class="label"><span class="label-text">Thời gian mong muốn *</span></label>
                         <input type="datetime-local" name="appointment_date" class="input input-bordered" required>
+                        <div class="flex items-center gap-2 mt-2">
+                            <button type="button" id="suggest-slot-btn" class="btn btn-outline btn-sm"><i class="ri-magic-line mr-1"></i>Gợi ý giờ trống</button>
+                            <span id="suggest-meta" class="text-xs text-gray-500"></span>
+                        </div>
+                        <div id="slot-suggestions" class="flex flex-wrap gap-2 mt-2"></div>
                     </div>
                     <div class="form-control">
                         <label class="label"><span class="label-text">Ghi chú triệu chứng</span></label>
