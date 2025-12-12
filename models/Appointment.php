@@ -131,4 +131,20 @@ class Appointment
         $row = $stmt->fetch();
         return (int)($row['total'] ?? 0);
     }
+
+    public function getOccupiedSlots(int $doctorId, string $date): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT appointment_date FROM appointments WHERE doctor_id = :doctor_id AND DATE(appointment_date) = :work_date AND status NOT IN ('cancelled')"
+        );
+        $stmt->execute([
+            ':doctor_id' => $doctorId,
+            ':work_date' => $date,
+        ]);
+
+        return array_map(
+            static fn($row) => date('H:i', strtotime($row['appointment_date'])),
+            $stmt->fetchAll()
+        );
+    }
 }

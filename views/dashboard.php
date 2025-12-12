@@ -199,8 +199,13 @@
             <button class="btn btn-primary" type="submit"><i class="ri-save-line mr-2"></i>Lưu hồ sơ</button>
         </form>
     </div>
-    <div class="bg-base-100 p-4 rounded-box shadow">
+</section>
+<?php endif; ?>
+
+<section class="mb-10">
+    <div class="bg-base-100 p-4 rounded-box shadow md:max-w-2xl">
         <h2 class="text-2xl font-semibold mb-4"><i class="ri-key-2-line mr-2"></i>Đổi mật khẩu</h2>
+        <p class="text-sm text-gray-500 mb-3">Áp dụng cho tất cả vai trò. Vui lòng nhập chính xác mật khẩu hiện tại.</p>
         <form id="password-form" class="space-y-3">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
             <label class="form-control">
@@ -219,4 +224,3 @@
         </form>
     </div>
 </section>
-<?php endif; ?>
