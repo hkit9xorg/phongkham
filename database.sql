@@ -48,6 +48,19 @@ CREATE TABLE articles (
     FOREIGN KEY (author_id) REFERENCES users(id)
 );
 
+CREATE TABLE doctors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(150) NOT NULL,
+    academic_title VARCHAR(150) NULL,
+    specialty VARCHAR(255) NULL,
+    avatar_url VARCHAR(500) NULL,
+    philosophy TEXT NULL,
+    joined_at DATE NULL,
+    is_active TINYINT NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 CREATE TABLE appointments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NULL,
@@ -100,6 +113,12 @@ INSERT INTO articles (title, content, category, status, author_id)
 VALUES
 ('5 bước chăm sóc răng miệng tại nhà', 'Đánh răng 2 lần/ngày, dùng chỉ nha khoa và nước súc miệng.', 'tuvan', 'published', 2),
 ('Khi nào cần tẩy trắng răng?', 'Tẩy trắng giúp răng sáng hơn 2-3 tone, nên thực hiện tại phòng khám uy tín.', 'tintuc', 'published', 2);
+
+INSERT INTO doctors (full_name, academic_title, specialty, avatar_url, philosophy, joined_at)
+VALUES
+('BS. Nguyễn Minh Châu', 'Thạc sĩ RHM', 'Phục hình - Cấy ghép Implant', 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80', 'Tập trung vào điều trị ít xâm lấn, giữ vững cấu trúc răng tự nhiên.', DATE_SUB(CURDATE(), INTERVAL 540 DAY)),
+('BS. Trần Gia Hưng', 'Bác sĩ CKI', 'Chỉnh nha & Invisalign', 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80', 'Lắng nghe, đồng hành và cá nhân hóa kế hoạch cho từng khách hàng.', DATE_SUB(CURDATE(), INTERVAL 320 DAY)),
+('BS. Phạm Bảo Ngọc', 'Bác sĩ', 'Điều trị tổng quát', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80', 'Ưu tiên trải nghiệm nhẹ nhàng, giúp khách hàng bớt lo lắng khi đến nha khoa.', DATE_SUB(CURDATE(), INTERVAL 180 DAY));
 
 INSERT INTO appointments (customer_id, doctor_id, service_id, full_name, phone, email, appointment_date, status, type, notes)
 VALUES

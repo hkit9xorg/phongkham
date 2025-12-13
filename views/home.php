@@ -26,11 +26,17 @@ $quickLinks = [
 
 $featuredServices = array_slice($services ?? [], 0, 6);
 $teamMembers = array_map(function ($doctor) {
+    $rolePieces = array_filter([
+        $doctor['academic_title'] ?? '',
+        $doctor['specialty'] ?? '',
+    ]);
+
     return [
         'name' => $doctor['full_name'] ?? 'Bác sĩ SmileCare',
-        'role' => 'Bác sĩ điều trị',
-        'email' => $doctor['email'] ?? '',
-        'avatar' => 'https://api.dicebear.com/7.x/identicon/svg?seed=' . urlencode($doctor['email'] ?? $doctor['full_name'] ?? 'doctor'),
+        'role' => $rolePieces ? implode(' • ', $rolePieces) : 'Bác sĩ điều trị',
+        'avatar' => $doctor['avatar_url'] ?? 'https://api.dicebear.com/7.x/identicon/svg?seed=' . urlencode($doctor['full_name'] ?? 'doctor'),
+        'philosophy' => $doctor['philosophy'] ?? '',
+        'joined_at' => $doctor['joined_at'] ?? null,
     ];
 }, $doctors ?? []);
 
@@ -208,8 +214,11 @@ if (empty($teamMembers)) {
                         </div>
                         <h3 class="font-semibold text-lg"><?= htmlspecialchars($member['name']) ?></h3>
                         <p class="text-sm text-base-content/70"><?= htmlspecialchars($member['role'] ?? 'Bác sĩ điều trị') ?></p>
-                        <?php if (!empty($member['email'])): ?>
-                            <p class="text-xs text-base-content/60"><i class="ri-mail-line mr-1"></i><?= htmlspecialchars($member['email']) ?></p>
+                        <?php if (!empty($member['philosophy'])): ?>
+                            <p class="text-sm text-base-content/70 line-clamp-3">“<?= htmlspecialchars($member['philosophy']) ?>”</p>
+                        <?php endif; ?>
+                        <?php if (!empty($member['joined_at'])): ?>
+                            <p class="text-xs text-base-content/60">Gia nhập: <?= date('m/Y', strtotime($member['joined_at'])) ?></p>
                         <?php endif; ?>
                     </div>
                 </div>

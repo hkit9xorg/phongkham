@@ -11,6 +11,7 @@
     <div class="tabs tabs-boxed mb-4">
         <a class="tab <?= $module === 'services' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=services">Dịch vụ</a>
         <a class="tab <?= $module === 'articles' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=articles">Bài viết</a>
+        <a class="tab <?= $module === 'doctors' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=doctors">Bác sĩ</a>
         <a class="tab <?= $module === 'appointments' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=appointments">Lịch hẹn</a>
         <a class="tab <?= $module === 'users' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=users">Người dùng</a>
     </div>
@@ -83,6 +84,32 @@
                                     <div class="flex gap-2 justify-end">
                                         <a class="link" href="/index.php?page=admin&module=articles&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
                                         <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+                                            <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" class="link text-error">Xóa</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php elseif ($module === 'doctors'): ?>
+                <table class="table">
+                    <thead><tr><th>Họ tên</th><th>Học hàm/học vị</th><th>Chuyên ngành</th><th>Ngày vào</th><th>Hiển thị</th><th class="text-right">Thao tác</th></tr></thead>
+                    <tbody>
+                        <?php foreach ($items as $item): ?>
+                            <tr>
+                                <td class="font-semibold"><?= htmlspecialchars($item['full_name']) ?></td>
+                                <td><?= htmlspecialchars($item['academic_title'] ?? 'Đang cập nhật') ?></td>
+                                <td><?= htmlspecialchars($item['specialty'] ?? 'Đang cập nhật') ?></td>
+                                <td><?= $item['joined_at'] ? date('d/m/Y', strtotime($item['joined_at'])) : 'Chưa cập nhật' ?></td>
+                                <td><?= (int)$item['is_active'] === 1 ? 'Hiển thị' : 'Ẩn' ?></td>
+                                <td class="text-right">
+                                    <div class="flex gap-2 justify-end">
+                                        <a class="link" href="/index.php?page=admin&module=doctors&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
+                                        <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa bác sĩ này?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
                                             <input type="hidden" name="action" value="delete">
@@ -200,6 +227,38 @@
                         <option value="published" <?= ($currentRecord['status'] ?? '') === 'published' ? 'selected' : '' ?>>Đăng ngay</option>
                     </select>
                 </label>
+            <?php elseif ($module === 'doctors'): ?>
+                <label class="form-control">
+                    <span class="label-text">Họ tên</span>
+                    <input name="full_name" class="input input-bordered" required value="<?= htmlspecialchars($currentRecord['full_name'] ?? '') ?>">
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Học hàm/Học vị</span>
+                    <input name="academic_title" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['academic_title'] ?? '') ?>">
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Chuyên ngành</span>
+                    <input name="specialty" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['specialty'] ?? '') ?>">
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Link ảnh chân dung</span>
+                    <input name="avatar_url" class="input input-bordered" placeholder="https://..." value="<?= htmlspecialchars($currentRecord['avatar_url'] ?? '') ?>">
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Triết lý điều trị</span>
+                    <textarea name="philosophy" class="textarea textarea-bordered" rows="3" placeholder="Tập trung vào trải nghiệm nhẹ nhàng..."><?= htmlspecialchars($currentRecord['philosophy'] ?? '') ?></textarea>
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Ngày vào</span>
+                    <input type="date" name="joined_at" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['joined_at'] ?? '') ?>">
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Trạng thái hiển thị</span>
+                    <select name="is_active" class="select select-bordered">
+                        <option value="1" <?= ($currentRecord['is_active'] ?? 1) == 1 ? 'selected' : '' ?>>Hiển thị</option>
+                        <option value="0" <?= isset($currentRecord['is_active']) && (int)$currentRecord['is_active'] === 0 ? 'selected' : '' ?>>Ẩn</option>
+                    </select>
+                </label>
             <?php else: ?>
                 <?php if ($currentRecord): ?>
                     <div class="space-y-2">
@@ -223,7 +282,7 @@
                         <span class="label-text">Bác sĩ phụ trách</span>
                         <select name="doctor_id" class="select select-bordered">
                             <option value="">Chưa gán</option>
-                            <?php foreach ($doctors as $doc): ?>
+                            <?php foreach ($doctorUsers as $doc): ?>
                                 <option value="<?= $doc['id'] ?>" <?= ($currentRecord['doctor_id'] ?? null) == $doc['id'] ? 'selected' : '' ?>><?= htmlspecialchars($doc['full_name']) ?></option>
                             <?php endforeach; ?>
                         </select>
