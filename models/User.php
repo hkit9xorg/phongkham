@@ -92,4 +92,17 @@ class User
         $row = $stmt->fetch();
         return (int)($row['total'] ?? 0);
     }
+
+    public function countByRole(): array
+    {
+        $stmt = $this->pdo->query('SELECT role, COUNT(*) AS total FROM users GROUP BY role');
+        $results = $stmt->fetchAll();
+
+        $counts = [];
+        foreach ($results as $row) {
+            $counts[$row['role']] = (int)$row['total'];
+        }
+
+        return $counts;
+    }
 }

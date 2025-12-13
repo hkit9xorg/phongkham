@@ -192,9 +192,17 @@ document.addEventListener('DOMContentLoaded', () => {
     initSliders();
 
     if (window.jQuery) {
-        $('#service-table').DataTable();
-        $('#article-table').DataTable();
-        $('#appointment-table').DataTable();
-        $('#schedule-table').DataTable();
+        if ($('#service-table').length) {
+            $('#service-table').DataTable();
+        }
+        if ($('#article-table').length) {
+            $('#article-table').DataTable();
+        }
+        if ($('#appointment-table').length) {
+            $('#appointment-table').DataTable();
+        }
+        if ($('#schedule-table').length) {
+            $('#schedule-table').DataTable();
+        }
     }
 });

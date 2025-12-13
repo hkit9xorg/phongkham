@@ -1,127 +1,154 @@
-<section class="mb-8">
-    <h1 class="text-3xl font-bold mb-4">Dashboard</h1>
+<?php
+$isAdmin = $user['role'] === 'admin';
+$isDoctor = $user['role'] === 'doctor';
+$canUpdateAppointment = in_array($user['role'], ['admin', 'doctor'], true);
+$appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
+?>
+
+<section class="mb-8 space-y-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div>
+            <p class="text-sm text-base-content/60">Welcome back, <?= htmlspecialchars($user['name']) ?> 👋</p>
+            <h1 class="text-3xl font-bold">Bảng điều khiển</h1>
+        </div>
+        <?php if ($isAdmin): ?>
+            <div class="badge badge-primary badge-lg shadow">Admin dashboard</div>
+        <?php elseif ($isDoctor): ?>
+            <div class="badge badge-secondary badge-lg shadow">Bác sĩ</div>
+        <?php endif; ?>
+    </div>
+
     <div class="grid md:grid-cols-4 gap-4">
-        <div class="stat bg-base-100 shadow">
+        <div class="stat bg-base-100 shadow rounded-box">
             <div class="stat-title">Khách hàng</div>
-            <div class="stat-value"><?= number_format($stats['customers']) ?></div>
+            <div class="stat-value text-primary"><?= number_format($stats['customers']) ?></div>
+            <div class="stat-desc">Tổng số tài khoản</div>
         </div>
-        <div class="stat bg-base-100 shadow">
+        <div class="stat bg-base-100 shadow rounded-box">
             <div class="stat-title">Dịch vụ</div>
-            <div class="stat-value"><?= number_format($stats['services']) ?></div>
+            <div class="stat-value text-secondary"><?= number_format($stats['services']) ?></div>
+            <div class="stat-desc">Đang được giới thiệu</div>
         </div>
-        <div class="stat bg-base-100 shadow">
+        <div class="stat bg-base-100 shadow rounded-box">
             <div class="stat-title">Bài viết</div>
-            <div class="stat-value"><?= number_format($stats['articles']) ?></div>
+            <div class="stat-value text-accent"><?= number_format($stats['articles']) ?></div>
+            <div class="stat-desc">Tin tức & tư vấn</div>
         </div>
-        <div class="stat bg-base-100 shadow">
+        <div class="stat bg-base-100 shadow rounded-box">
             <div class="stat-title">Lịch hẹn</div>
-            <div class="stat-value"><?= number_format($stats['appointments']) ?></div>
+            <div class="stat-value text-primary"><?= number_format($stats['appointments']) ?></div>
+            <div class="stat-desc">Tổng lượt đặt lịch</div>
+        </div>
+    </div>
+
+    <?php if ($isAdmin || $isDoctor): ?>
+        <div class="bg-base-100 p-4 rounded-box shadow flex flex-wrap gap-3">
+            <div class="w-full text-base font-semibold mb-2 flex items-center gap-2">
+                <i class="ri-flashlight-line"></i>Thao tác nhanh
+            </div>
+            <?php if ($isAdmin): ?>
+                <a class="btn btn-primary" href="/index.php?page=create_service"><i class="ri-add-line mr-2"></i>Thêm dịch vụ</a>
+            <?php endif; ?>
+            <a class="btn btn-secondary" href="/index.php?page=create_article"><i class="ri-article-line mr-2"></i>Viết bài mới</a>
+            <?php if ($isAdmin): ?>
+                <a class="btn" href="/index.php?page=admin&module=appointments"><i class="ri-calendar-event-line mr-2"></i>Quản lý lịch hẹn</a>
+                <a class="btn btn-outline" href="/index.php?page=admin&module=services"><i class="ri-tools-line mr-2"></i>Điều chỉnh dịch vụ</a>
+            <?php else: ?>
+                <a class="btn btn-outline" href="/index.php?page=admin&module=appointments"><i class="ri-list-check mr-2"></i>Lịch hẹn phụ trách</a>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+</section>
+
+<?php if ($isAdmin): ?>
+<section class="grid lg:grid-cols-3 gap-4 mb-10">
+    <div class="bg-base-100 p-5 rounded-box shadow lg:col-span-2 space-y-3">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold flex items-center gap-2"><i class="ri-donut-chart-line"></i>Trạng thái lịch hẹn</h2>
+            <span class="text-sm text-base-content/60"><?= array_sum($appointmentStatusCounts ?? []) ?> lượt</span>
+        </div>
+        <div class="space-y-2">
+            <?php foreach (($appointmentStatusCounts ?? []) as $status => $count): ?>
+                <?php $percent = round(($count / $appointmentTotal) * 100); ?>
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="uppercase tracking-wide text-base-content/70"><?= htmlspecialchars($status) ?></span>
+                        <span class="font-semibold"><?= $count ?> lượt (<?= $percent ?>%)</span>
+                    </div>
+                    <div class="h-3 rounded-full bg-base-200 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-primary to-secondary" style="width: <?= $percent ?>%"></div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <?php if (empty($appointmentStatusCounts)): ?>
+                <p class="text-sm text-base-content/60">Chưa có dữ liệu lịch hẹn.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="space-y-4">
+        <div class="bg-base-100 p-5 rounded-box shadow space-y-3">
+            <h2 class="text-xl font-semibold flex items-center gap-2"><i class="ri-service-line"></i>Dịch vụ</h2>
+            <p class="text-sm text-base-content/60">Phân bổ hiển thị</p>
+            <?php $serviceTotal = max(1, $serviceVisibility['active'] + $serviceVisibility['hidden']); ?>
+            <div class="space-y-2">
+                <div class="flex justify-between text-sm"><span>Hiển thị</span><span><?= $serviceVisibility['active'] ?></span></div>
+                <div class="progress progress-primary" value="<?= $serviceVisibility['active'] ?>" max="<?= $serviceTotal ?>"></div>
+                <div class="flex justify-between text-sm"><span>Ẩn</span><span><?= $serviceVisibility['hidden'] ?></span></div>
+                <div class="progress progress-secondary" value="<?= $serviceVisibility['hidden'] ?>" max="<?= $serviceTotal ?>"></div>
+            </div>
+        </div>
+        <div class="bg-base-100 p-5 rounded-box shadow space-y-3">
+            <h2 class="text-xl font-semibold flex items-center gap-2"><i class="ri-user-star-line"></i>Phân bố tài khoản</h2>
+            <?php foreach ($roleDistribution as $role => $count): ?>
+                <?php $percent = round(($count / max(1, array_sum($roleDistribution))) * 100); ?>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="capitalize"><?= htmlspecialchars($role) ?></span>
+                    <span class="font-semibold"><?= $count ?> (<?= $percent ?>%)</span>
+                </div>
+            <?php endforeach; ?>
+            <?php if (empty($roleDistribution)): ?>
+                <p class="text-sm text-base-content/60">Chưa có dữ liệu người dùng.</p>
+            <?php endif; ?>
         </div>
     </div>
 </section>
-
-<?php if ($user['role'] === 'admin'): ?>
-<section class="mb-10">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-semibold"><i class="ri-hospital-line mr-2"></i>Quản lý dịch vụ</h2>
-    </div>
-    <form id="service-form" class="grid md:grid-cols-4 gap-3 bg-base-100 p-4 rounded-box shadow mb-4">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
-        <input type="hidden" name="id" value="">
-        <input name="name" class="input input-bordered" placeholder="Tên dịch vụ" required>
-        <input name="price" type="number" step="1000" class="input input-bordered" placeholder="Giá từ">
-        <select name="is_active" class="select select-bordered">
-            <option value="1">Hiển thị</option>
-            <option value="0">Ẩn</option>
-        </select>
-        <input name="description" class="input input-bordered col-span-2 md:col-span-4" placeholder="Mô tả ngắn">
-        <button class="btn btn-primary md:col-span-4" type="submit"><i class="ri-add-line mr-2"></i>Lưu dịch vụ</button>
-    </form>
-    <div class="overflow-x-auto bg-base-100 p-4 rounded-box shadow">
-        <table class="table" id="service-table">
-            <thead>
-                <tr><th>Tên</th><th>Giá</th><th>Trạng thái</th></tr>
-            </thead>
-            <tbody>
-                <?php foreach ($serviceModel->all() as $service): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($service['name']) ?></td>
-                        <td><?= $service['price'] ? number_format($service['price']) . ' đ' : 'Đang cập nhật' ?></td>
-                        <td><?= $service['is_active'] ? 'Hiển thị' : 'Ẩn' ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</section>
 <?php endif; ?>
 
-<?php if (in_array($user['role'], ['admin', 'doctor'], true)): ?>
 <section class="mb-10">
     <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-semibold"><i class="ri-article-line mr-2"></i>Tạo bài viết</h2>
+        <h2 class="text-2xl font-semibold flex items-center gap-2"><i class="ri-calendar-line"></i>Danh sách lịch hẹn</h2>
+        <?php if ($isAdmin): ?>
+            <a class="btn btn-outline btn-sm" href="/index.php?page=admin&module=appointments"><i class="ri-arrow-right-up-line mr-1"></i>Xem tất cả</a>
+        <?php endif; ?>
     </div>
-    <form id="article-form" class="grid md:grid-cols-2 gap-3 bg-base-100 p-4 rounded-box shadow">
-        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
-        <input name="title" class="input input-bordered" placeholder="Tiêu đề" required>
-        <select name="status" class="select select-bordered">
-            <option value="published">Đăng ngay</option>
-            <option value="draft">Lưu nháp</option>
-        </select>
-        <input name="category" class="input input-bordered" placeholder="Chuyên mục" value="tuvan">
-        <textarea name="content" class="textarea textarea-bordered md:col-span-2" rows="4" placeholder="Nội dung" required></textarea>
-        <button class="btn btn-primary md:col-span-2" type="submit"><i class="ri-save-line mr-2"></i>Lưu bài</button>
-    </form>
-    <div class="overflow-x-auto bg-base-100 p-4 rounded-box shadow mt-4">
-        <table class="table" id="article-table">
-            <thead><tr><th>Tiêu đề</th><th>Trạng thái</th><th>Tác giả</th></tr></thead>
-            <tbody>
-                <?php foreach ($articleModel->all() as $article): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($article['title']) ?></td>
-                        <td><?= htmlspecialchars($article['status']) ?></td>
-                        <td><?= htmlspecialchars($article['author_name'] ?? '') ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</section>
-<?php endif; ?>
-
-<?php $canUpdateAppointment = in_array($user['role'], ['admin', 'doctor'], true); ?>
-<section class="mb-10">
-    <h2 class="text-2xl font-semibold mb-4"><i class="ri-calendar-line mr-2"></i>Danh sách lịch hẹn</h2>
     <div class="overflow-x-auto bg-base-100 p-4 rounded-box shadow">
         <table class="table" id="appointment-table">
             <thead>
                 <tr>
                     <th>Khách hàng</th><th>Dịch vụ</th><th>Ngày giờ</th><th>Trạng thái</th><th>Bác sĩ</th><th>Ghi chú</th>
-                    <?php if ($canUpdateAppointment): ?><th>Thao tác</th><?php endif; ?>
+                    <?php if ($canUpdateAppointment && $isDoctor): ?><th>Thao tác</th><?php endif; ?>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($appointments as $app): ?>
+                <?php foreach ($isAdmin ? array_slice($appointments, 0, 6) : $appointments as $app): ?>
                     <tr>
                         <td><?= htmlspecialchars($app['full_name'] ?? $app['customer_name'] ?? 'Khách lẻ') ?></td>
                         <td><?= htmlspecialchars($app['service_name'] ?? 'Tư vấn') ?></td>
                         <td><?= htmlspecialchars($app['appointment_date']) ?></td>
-                        <td><?= htmlspecialchars($app['status']) ?></td>
+                        <td><span class="badge badge-outline badge-sm capitalize"><?= htmlspecialchars($app['status']) ?></span></td>
                         <td><?= htmlspecialchars($app['doctor_name'] ?? '') ?></td>
                         <td><?= htmlspecialchars($app['notes'] ?? '') ?></td>
-                        <?php if ($canUpdateAppointment): ?>
+                        <?php if ($canUpdateAppointment && $isDoctor): ?>
                             <td>
                                 <form class="appointment-update-form space-y-1" data-id="<?= $app['id'] ?>">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
-                                    <?php if ($user['role'] === 'doctor'): ?>
-                                        <input type="hidden" name="doctor_id" value="<?= (int)$user['id'] ?>">
-                                    <?php endif; ?>
+                                    <input type="hidden" name="doctor_id" value="<?= (int)$user['id'] ?>">
                                     <select name="status" class="select select-bordered select-sm w-full">
                                         <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
                                             <option value="<?= $st ?>" <?= ($app['status'] ?? '') === $st ? 'selected' : '' ?>><?= $st ?></option>
                                         <?php endforeach; ?>
                                     </select>
-                                    <input type="datetime-local" name="appointment_date" class="input input-bordered input-sm w-full" value="<?= isset($app['appointment_date']) ? date('Y-m-d\TH:i', strtotime($app['appointment_date'])) : '' ?>">
+                                    <input type="datetime-local" name="appointment_date" class="input input-bordered input-sm w-full" value="<?= isset($app['appointment_date']) ? date('Y-m-d\\TH:i', strtotime($app['appointment_date'])) : '' ?>">
                                     <textarea name="notes" rows="2" class="textarea textarea-bordered textarea-xs w-full" placeholder="Ghi chú"><?= htmlspecialchars($app['notes'] ?? '') ?></textarea>
                                     <button type="submit" class="btn btn-primary btn-sm w-full"><i class="ri-save-line mr-1"></i>Cập nhật</button>
                                 </form>
@@ -131,6 +158,9 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
+        <?php if ($isAdmin): ?>
+            <p class="text-sm text-base-content/60 mt-2">Hiển thị 6 lịch hẹn mới nhất.</p>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -199,28 +229,27 @@
             <button class="btn btn-primary" type="submit"><i class="ri-save-line mr-2"></i>Lưu hồ sơ</button>
         </form>
     </div>
-</section>
-<?php endif; ?>
-
-<section class="mb-10">
-    <div class="bg-base-100 p-4 rounded-box shadow md:max-w-2xl">
-        <h2 class="text-2xl font-semibold mb-4"><i class="ri-key-2-line mr-2"></i>Đổi mật khẩu</h2>
-        <p class="text-sm text-gray-500 mb-3">Áp dụng cho tất cả vai trò. Vui lòng nhập chính xác mật khẩu hiện tại.</p>
-        <form id="password-form" class="space-y-3">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
-            <label class="form-control">
-                <span class="label-text">Mật khẩu hiện tại</span>
-                <input type="password" name="current_password" class="input input-bordered" required>
-            </label>
-            <label class="form-control">
-                <span class="label-text">Mật khẩu mới</span>
-                <input type="password" name="new_password" class="input input-bordered" required>
-            </label>
-            <label class="form-control">
-                <span class="label-text">Xác nhận mật khẩu mới</span>
-                <input type="password" name="confirm_password" class="input input-bordered" required>
-            </label>
-            <button class="btn btn-primary" type="submit"><i class="ri-lock-password-line mr-2"></i>Cập nhật mật khẩu</button>
-        </form>
+    <div class="bg-base-100 p-4 rounded-box shadow">
+        <h2 class="text-2xl font-semibold mb-4"><i class="ri-calendar-todo-line mr-2"></i>Lịch hẹn của bạn</h2>
+        <div class="space-y-3">
+            <?php foreach ($appointments as $app): ?>
+                <div class="card bg-base-200 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="flex items-center justify-between">
+                            <div class="font-semibold"><?= htmlspecialchars($app['service_name'] ?? 'Tư vấn') ?></div>
+                            <div class="badge badge-outline capitalize"><?= htmlspecialchars($app['status']) ?></div>
+                        </div>
+                        <p class="text-sm text-base-content/70 flex items-center gap-2"><i class="ri-time-line"></i><?= htmlspecialchars($app['appointment_date']) ?></p>
+                        <?php if (!empty($app['notes'])): ?>
+                            <p class="text-sm text-base-content/70">Ghi chú: <?= htmlspecialchars($app['notes']) ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <?php if (empty($appointments)): ?>
+                <p class="text-sm text-base-content/60">Bạn chưa có lịch hẹn nào.</p>
+            <?php endif; ?>
+        </div>
     </div>
 </section>
+<?php endif; ?>
