@@ -12,6 +12,7 @@
         <a class="tab <?= $module === 'services' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=services">Dịch vụ</a>
         <a class="tab <?= $module === 'articles' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=articles">Bài viết</a>
         <a class="tab <?= $module === 'appointments' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=appointments">Lịch hẹn</a>
+        <a class="tab <?= $module === 'users' ? 'tab-active' : '' ?>" href="/index.php?page=admin&module=users">Người dùng</a>
     </div>
 </section>
 
@@ -69,6 +70,21 @@
                                 <td><?= htmlspecialchars($item['status']) ?></td>
                                 <td><?= htmlspecialchars($item['author_name'] ?? '') ?></td>
                                 <td><a class="link" href="/index.php?page=admin&module=articles&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php elseif ($module === 'users'): ?>
+                <table class="table">
+                    <thead><tr><th>Họ tên</th><th>SĐT</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+                    <tbody>
+                        <?php foreach ($items as $item): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($item['full_name']) ?></td>
+                                <td><?= htmlspecialchars($item['phone'] ?? 'Chưa cập nhật') ?></td>
+                                <td><span class="badge badge-outline capitalize"><?= htmlspecialchars($item['role']) ?></span></td>
+                                <td><?= (int)$item['is_active'] === 1 ? 'Hoạt động' : 'Khoá' ?></td>
+                                <td><a class="link" href="/index.php?page=admin&module=users&edit_id=<?= $item['id'] ?>">Cập nhật quyền</a></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -175,6 +191,17 @@
                     <label class="form-control">
                         <span class="label-text">Ghi chú</span>
                         <textarea name="notes" class="textarea textarea-bordered" rows="3"><?= htmlspecialchars($currentRecord['notes'] ?? '') ?></textarea>
+                    </label>
+                <?php elseif ($module === 'users'): ?>
+                    <p><strong>Họ tên:</strong> <?= htmlspecialchars($currentRecord['full_name'] ?? '') ?></p>
+                    <p><strong>Số điện thoại:</strong> <?= htmlspecialchars($currentRecord['phone'] ?? '') ?></p>
+                    <label class="form-control">
+                        <span class="label-text">Vai trò</span>
+                        <select name="role" class="select select-bordered" required>
+                            <?php foreach (['customer' => 'Khách hàng', 'doctor' => 'Bác sĩ', 'admin' => 'Quản trị'] as $role => $label): ?>
+                                <option value="<?= $role ?>" <?= ($currentRecord['role'] ?? '') === $role ? 'selected' : '' ?>><?= $label ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </label>
                 <?php else: ?>
                     <p>Chọn một lịch hẹn để chỉnh sửa.</p>

@@ -125,6 +125,17 @@ class Appointment
         ]);
     }
 
+    public function requestReschedule(int $id, int $customerId, string $appointmentDate, ?string $note = null): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE appointments SET appointment_date = :appointment_date, status = "rescheduled", reschedule_request = :note, updated_at = NOW() WHERE id = :id AND customer_id = :customer_id');
+        return $stmt->execute([
+            ':id' => $id,
+            ':customer_id' => $customerId,
+            ':appointment_date' => $appointmentDate,
+            ':note' => $note,
+        ]);
+    }
+
     public function count(): int
     {
         $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM appointments');

@@ -18,44 +18,65 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
         <?php endif; ?>
     </div>
 
-    <div class="grid md:grid-cols-4 gap-4">
-        <div class="stat bg-base-100 shadow rounded-box">
-            <div class="stat-title">Khách hàng</div>
-            <div class="stat-value text-primary"><?= number_format($stats['customers']) ?></div>
-            <div class="stat-desc">Tổng số tài khoản</div>
+    <?php if ($isAdmin): ?>
+        <div class="grid md:grid-cols-4 gap-4">
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Khách hàng</div>
+                <div class="stat-value text-primary"><?= number_format($stats['customers']) ?></div>
+                <div class="stat-desc">Tổng số tài khoản</div>
+            </div>
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Dịch vụ</div>
+                <div class="stat-value text-secondary"><?= number_format($stats['services']) ?></div>
+                <div class="stat-desc">Đang được giới thiệu</div>
+            </div>
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Bài viết</div>
+                <div class="stat-value text-accent"><?= number_format($stats['articles']) ?></div>
+                <div class="stat-desc">Tin tức & tư vấn</div>
+            </div>
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Lịch hẹn</div>
+                <div class="stat-value text-primary"><?= number_format($stats['appointments']) ?></div>
+                <div class="stat-desc">Tổng lượt đặt lịch</div>
+            </div>
         </div>
-        <div class="stat bg-base-100 shadow rounded-box">
-            <div class="stat-title">Dịch vụ</div>
-            <div class="stat-value text-secondary"><?= number_format($stats['services']) ?></div>
-            <div class="stat-desc">Đang được giới thiệu</div>
+    <?php elseif ($isDoctor): ?>
+        <div class="grid md:grid-cols-3 gap-4">
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Lịch hẹn được giao</div>
+                <div class="stat-value text-primary"><?= number_format($doctorStats['appointments'] ?? 0) ?></div>
+                <div class="stat-desc">Tất cả trạng thái</div>
+            </div>
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Lịch làm việc</div>
+                <div class="stat-value text-secondary"><?= number_format($doctorStats['schedules'] ?? 0) ?></div>
+                <div class="stat-desc">Theo cấu hình của phòng khám</div>
+            </div>
+            <div class="stat bg-base-100 shadow rounded-box">
+                <div class="stat-title">Lịch sắp tới</div>
+                <div class="stat-value text-accent"><?= number_format(count(array_filter($appointments, fn($item) => strtotime($item['appointment_date']) > time()))) ?></div>
+                <div class="stat-desc">Lọc theo thời gian</div>
+            </div>
         </div>
-        <div class="stat bg-base-100 shadow rounded-box">
-            <div class="stat-title">Bài viết</div>
-            <div class="stat-value text-accent"><?= number_format($stats['articles']) ?></div>
-            <div class="stat-desc">Tin tức & tư vấn</div>
-        </div>
-        <div class="stat bg-base-100 shadow rounded-box">
-            <div class="stat-title">Lịch hẹn</div>
-            <div class="stat-value text-primary"><?= number_format($stats['appointments']) ?></div>
-            <div class="stat-desc">Tổng lượt đặt lịch</div>
-        </div>
-    </div>
+    <?php endif; ?>
 
-    <?php if ($isAdmin || $isDoctor): ?>
+    <?php if ($isAdmin): ?>
         <div class="bg-base-100 p-4 rounded-box shadow flex flex-wrap gap-3">
             <div class="w-full text-base font-semibold mb-2 flex items-center gap-2">
                 <i class="ri-flashlight-line"></i>Thao tác nhanh
             </div>
-            <?php if ($isAdmin): ?>
-                <a class="btn btn-primary" href="/index.php?page=create_service"><i class="ri-add-line mr-2"></i>Thêm dịch vụ</a>
-            <?php endif; ?>
+            <a class="btn btn-primary" href="/index.php?page=create_service"><i class="ri-add-line mr-2"></i>Thêm dịch vụ</a>
             <a class="btn btn-secondary" href="/index.php?page=create_article"><i class="ri-article-line mr-2"></i>Viết bài mới</a>
-            <?php if ($isAdmin): ?>
-                <a class="btn" href="/index.php?page=admin&module=appointments"><i class="ri-calendar-event-line mr-2"></i>Quản lý lịch hẹn</a>
-                <a class="btn btn-outline" href="/index.php?page=admin&module=services"><i class="ri-tools-line mr-2"></i>Điều chỉnh dịch vụ</a>
-            <?php else: ?>
-                <a class="btn btn-outline" href="/index.php?page=admin&module=appointments"><i class="ri-list-check mr-2"></i>Lịch hẹn phụ trách</a>
-            <?php endif; ?>
+            <a class="btn" href="/index.php?page=admin&module=appointments"><i class="ri-calendar-event-line mr-2"></i>Quản lý lịch hẹn</a>
+            <a class="btn btn-outline" href="/index.php?page=admin&module=services"><i class="ri-tools-line mr-2"></i>Điều chỉnh dịch vụ</a>
+        </div>
+    <?php elseif ($isDoctor): ?>
+        <div class="bg-base-100 p-4 rounded-box shadow flex flex-wrap gap-3">
+            <div class="w-full text-base font-semibold mb-2 flex items-center gap-2">
+                <i class="ri-flashlight-line"></i>Thao tác nhanh</div>
+            <a class="btn btn-secondary" href="#schedule-table"><i class="ri-time-line mr-2"></i>Xem lịch làm việc</a>
+            <a class="btn btn-outline" href="#appointment-table"><i class="ri-list-check mr-2"></i>Lịch hẹn phụ trách</a>
         </div>
     <?php endif; ?>
 </section>
@@ -114,6 +135,7 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
 </section>
 <?php endif; ?>
 
+<?php if ($isAdmin || $isDoctor): ?>
 <section class="mb-10">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-2xl font-semibold flex items-center gap-2"><i class="ri-calendar-line"></i>Danh sách lịch hẹn</h2>
@@ -163,6 +185,7 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
         <?php endif; ?>
     </div>
 </section>
+<?php endif; ?>
 
 <?php if ($user['role'] === 'doctor' && $doctorSchedules): ?>
 <section class="mb-10">
@@ -229,12 +252,15 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
             <button class="btn btn-primary" type="submit"><i class="ri-save-line mr-2"></i>Lưu hồ sơ</button>
         </form>
     </div>
-    <div class="bg-base-100 p-4 rounded-box shadow">
-        <h2 class="text-2xl font-semibold mb-4"><i class="ri-calendar-todo-line mr-2"></i>Lịch hẹn của bạn</h2>
+    <div class="bg-base-100 p-4 rounded-box shadow space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-semibold flex items-center gap-2"><i class="ri-calendar-todo-line mr-2"></i>Lịch hẹn sắp tới</h2>
+            <span class="text-sm text-base-content/60">Chỉ hiển thị lịch đang chờ hoặc đã xác nhận</span>
+        </div>
         <div class="space-y-3">
-            <?php foreach ($appointments as $app): ?>
+            <?php foreach ($customerAppointments as $app): ?>
                 <div class="card bg-base-200 shadow-sm">
-                    <div class="card-body py-3">
+                    <div class="card-body py-3 space-y-2">
                         <div class="flex items-center justify-between">
                             <div class="font-semibold"><?= htmlspecialchars($app['service_name'] ?? 'Tư vấn') ?></div>
                             <div class="badge badge-outline capitalize"><?= htmlspecialchars($app['status']) ?></div>
@@ -243,11 +269,53 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                         <?php if (!empty($app['notes'])): ?>
                             <p class="text-sm text-base-content/70">Ghi chú: <?= htmlspecialchars($app['notes']) ?></p>
                         <?php endif; ?>
+                        <form class="appointment-reschedule-form grid md:grid-cols-2 gap-3" data-id="<?= $app['id'] ?>">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+                            <label class="form-control">
+                                <span class="label-text">Thời gian muốn dời</span>
+                                <input type="datetime-local" name="appointment_date" class="input input-bordered" value="<?= isset($app['appointment_date']) ? date('Y-m-d\\TH:i', strtotime($app['appointment_date'])) : '' ?>" required>
+                            </label>
+                            <label class="form-control">
+                                <span class="label-text">Lý do (tuỳ chọn)</span>
+                                <input type="text" name="note" class="input input-bordered" placeholder="Ví dụ: bận công việc">
+                            </label>
+                            <div class="md:col-span-2">
+                                <button class="btn btn-primary btn-sm" type="submit"><i class="ri-calendar-check-line mr-1"></i>Gửi yêu cầu dời lịch</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             <?php endforeach; ?>
-            <?php if (empty($appointments)): ?>
-                <p class="text-sm text-base-content/60">Bạn chưa có lịch hẹn nào.</p>
+            <?php if (empty($customerAppointments)): ?>
+                <p class="text-sm text-base-content/60">Bạn chưa có lịch hẹn đang mở.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+<section class="mb-10">
+    <div class="bg-base-100 p-4 rounded-box shadow space-y-3">
+        <h2 class="text-2xl font-semibold flex items-center gap-2"><i class="ri-file-list-3-line mr-2"></i>Lịch sử sử dụng dịch vụ</h2>
+        <p class="text-sm text-base-content/60">Bao gồm các lịch hẹn đã hoàn tất, huỷ hoặc tái khám.</p>
+        <div class="grid md:grid-cols-2 gap-3">
+            <?php foreach ($appointmentHistory as $history): ?>
+                <div class="card bg-base-200 shadow-sm">
+                    <div class="card-body py-3 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <div class="font-semibold"><?= htmlspecialchars($history['service_name'] ?? 'Tư vấn') ?></div>
+                            <div class="badge badge-outline capitalize"><?= htmlspecialchars($history['status']) ?></div>
+                        </div>
+                        <p class="text-sm text-base-content/70 flex items-center gap-2"><i class="ri-time-line"></i><?= htmlspecialchars($history['appointment_date']) ?></p>
+                        <?php if (!empty($history['doctor_name'])): ?>
+                            <p class="text-sm text-base-content/70">Bác sĩ: <?= htmlspecialchars($history['doctor_name']) ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($history['notes'])): ?>
+                            <p class="text-sm text-base-content/70">Ghi chú: <?= htmlspecialchars($history['notes']) ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <?php if (empty($appointmentHistory)): ?>
+                <p class="text-sm text-base-content/60">Chưa có lịch sử sử dụng dịch vụ.</p>
             <?php endif; ?>
         </div>
     </div>

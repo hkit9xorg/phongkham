@@ -38,16 +38,29 @@ $serviceVisibility = [
     'hidden' => max(0, $serviceModel->count() - $activeServices),
 ];
 $roleDistribution = $userModel->countByRole();
+$doctorStats = [];
 
 $appointments = [];
+$customerAppointments = [];
+$appointmentHistory = [];
 $doctorSchedules = [];
 $patientProfile = null;
 if ($user['role'] === 'customer') {
     $appointments = $appointmentModel->listForUser($user['id']);
+    $customerAppointments = array_filter($appointments, static function ($appointment) {
+        return in_array($appointment['status'], ['pending', 'confirmed', 'rescheduled'], true);
+    });
+    $appointmentHistory = array_filter($appointments, static function ($appointment) {
+        return !in_array($appointment['status'], ['pending', 'confirmed', 'rescheduled'], true);
+    });
     $patientProfile = $patientModel->findByUserId($user['id']);
 } elseif ($user['role'] === 'doctor') {
     $appointments = $appointmentModel->listForDoctor($user['id']);
     $doctorSchedules = $scheduleModel->listForDoctor($user['id']);
+    $doctorStats = [
+        'appointments' => count($appointments),
+        'schedules' => count($doctorSchedules),
+    ];
 } else {
     $appointments = $appointmentModel->all();
 }

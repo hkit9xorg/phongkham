@@ -64,6 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $articleModel->create($data);
             $_SESSION['flash'] = 'Đã thêm bài viết.';
         }
+    } elseif ($module === 'users') {
+        $id = (int)($_POST['id'] ?? 0);
+        $role = $_POST['role'] ?? '';
+        if ($id > 0 && in_array($role, ['admin', 'doctor', 'customer'], true)) {
+            $userModel->updateRole($id, $role);
+            $_SESSION['flash'] = 'Đã cập nhật quyền người dùng.';
+        }
     } elseif ($module === 'appointments') {
         $id = (int)($_POST['id'] ?? 0);
         if ($id > 0) {
@@ -87,6 +94,8 @@ if (isset($_GET['edit_id'])) {
         $currentRecord = $serviceModel->findById($editId);
     } elseif ($module === 'articles') {
         $currentRecord = $articleModel->findById($editId);
+    } elseif ($module === 'users') {
+        $currentRecord = $userModel->findById($editId);
     } elseif ($module === 'appointments') {
         $currentRecord = $appointmentModel->findById($editId);
     }
@@ -98,6 +107,10 @@ if ($module === 'services') {
     $total = $result['total'];
 } elseif ($module === 'articles') {
     $result = $articleModel->searchPaginated($keyword, $page, $perPage);
+    $items = $result['data'];
+    $total = $result['total'];
+} elseif ($module === 'users') {
+    $result = $userModel->paginate($keyword, $page, $perPage);
     $items = $result['data'];
     $total = $result['total'];
 } else {
