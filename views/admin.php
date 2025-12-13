@@ -48,35 +48,55 @@
         <div class="overflow-x-auto">
             <?php if ($module === 'services'): ?>
                 <table class="table">
-                    <thead><tr><th>Tên</th><th>Giá</th><th>Hiển thị</th><th></th></tr></thead>
+                    <thead><tr><th>Tên</th><th>Giá</th><th>Hiển thị</th><th class="text-right">Thao tác</th></tr></thead>
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
                                 <td><?= htmlspecialchars($item['name']) ?></td>
                                 <td><?= $item['price'] ? number_format($item['price']) . ' đ' : 'Đang cập nhật' ?></td>
                                 <td><?= $item['is_active'] ? 'Hiển thị' : 'Ẩn' ?></td>
-                                <td><a class="link" href="/index.php?page=admin&module=services&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a></td>
+                                <td class="text-right">
+                                    <div class="flex gap-2 justify-end">
+                                        <a class="link" href="/index.php?page=admin&module=services&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
+                                        <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa dịch vụ này?');">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+                                            <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" class="link text-error">Xóa</button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php elseif ($module === 'articles'): ?>
                 <table class="table">
-                    <thead><tr><th>Tiêu đề</th><th>Trạng thái</th><th>Tác giả</th><th></th></tr></thead>
+                    <thead><tr><th>Tiêu đề</th><th>Trạng thái</th><th>Tác giả</th><th class="text-right">Thao tác</th></tr></thead>
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
                                 <td><?= htmlspecialchars($item['title']) ?></td>
                                 <td><?= htmlspecialchars($item['status']) ?></td>
                                 <td><?= htmlspecialchars($item['author_name'] ?? '') ?></td>
-                                <td><a class="link" href="/index.php?page=admin&module=articles&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a></td>
+                                <td class="text-right">
+                                    <div class="flex gap-2 justify-end">
+                                        <a class="link" href="/index.php?page=admin&module=articles&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
+                                        <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+                                            <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" class="link text-error">Xóa</button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php elseif ($module === 'users'): ?>
                 <table class="table">
-                    <thead><tr><th>Họ tên</th><th>SĐT</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+                    <thead><tr><th>Họ tên</th><th>SĐT</th><th>Vai trò</th><th>Trạng thái</th><th class="text-right">Thao tác</th></tr></thead>
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
@@ -84,14 +104,24 @@
                                 <td><?= htmlspecialchars($item['phone'] ?? 'Chưa cập nhật') ?></td>
                                 <td><span class="badge badge-outline capitalize"><?= htmlspecialchars($item['role']) ?></span></td>
                                 <td><?= (int)$item['is_active'] === 1 ? 'Hoạt động' : 'Khoá' ?></td>
-                                <td><a class="link" href="/index.php?page=admin&module=users&edit_id=<?= $item['id'] ?>">Cập nhật quyền</a></td>
+                                <td class="text-right">
+                                    <div class="flex gap-2 justify-end">
+                                        <a class="link" href="/index.php?page=admin&module=users&edit_id=<?= $item['id'] ?>">Cập nhật quyền</a>
+                                        <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa người dùng này?');">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+                                            <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" class="link text-error">Xóa</button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php else: ?>
                 <table class="table">
-                    <thead><tr><th>Khách hàng</th><th>Dịch vụ</th><th>Ngày giờ</th><th>Trạng thái</th><th></th></tr></thead>
+                    <thead><tr><th>Khách hàng</th><th>Dịch vụ</th><th>Ngày giờ</th><th>Trạng thái</th><th class="text-right">Thao tác</th></tr></thead>
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
@@ -99,7 +129,17 @@
                                 <td><?= htmlspecialchars($item['service_name'] ?? 'Tư vấn') ?></td>
                                 <td><?= htmlspecialchars($item['appointment_date']) ?></td>
                                 <td><?= htmlspecialchars($item['status']) ?></td>
-                                <td><a class="link" href="/index.php?page=admin&module=appointments&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a></td>
+                                <td class="text-right">
+                                    <div class="flex gap-2 justify-end">
+                                        <a class="link" href="/index.php?page=admin&module=appointments&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
+                                        <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa lịch hẹn này?');">
+                                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+                                            <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" class="link text-error">Xóa</button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

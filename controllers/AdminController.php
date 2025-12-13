@@ -27,60 +27,80 @@ $currentRecord = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['csrf_token'] ?? '';
+    $action = $_POST['action'] ?? 'save';
     if (!Csrf::verify($token)) {
         $_SESSION['flash'] = 'CSRF token không hợp lệ.';
         header("Location: /index.php?page=admin&module={$module}");
         exit;
     }
 
-    if ($module === 'services') {
-        $id = (int)($_POST['id'] ?? 0);
-        $data = [
-            'name' => trim($_POST['name'] ?? ''),
-            'price' => $_POST['price'] !== '' ? $_POST['price'] : null,
-            'description' => trim($_POST['description'] ?? ''),
-            'is_active' => (int)($_POST['is_active'] ?? 1),
-        ];
-        if ($id > 0) {
-            $serviceModel->update($id, $data);
-            $_SESSION['flash'] = 'Đã cập nhật dịch vụ.';
-        } else {
-            $serviceModel->create($data);
-            $_SESSION['flash'] = 'Đã thêm dịch vụ.';
-        }
-    } elseif ($module === 'articles') {
-        $id = (int)($_POST['id'] ?? 0);
-        $data = [
-            'title' => trim($_POST['title'] ?? ''),
-            'content' => trim($_POST['content'] ?? ''),
-            'category' => trim($_POST['category'] ?? 'news'),
-            'status' => $_POST['status'] ?? 'draft',
-            'author_id' => $user['id'],
-        ];
-        if ($id > 0) {
-            $articleModel->update($id, $data);
-            $_SESSION['flash'] = 'Đã cập nhật bài viết.';
-        } else {
-            $articleModel->create($data);
-            $_SESSION['flash'] = 'Đã thêm bài viết.';
-        }
-    } elseif ($module === 'users') {
-        $id = (int)($_POST['id'] ?? 0);
-        $role = $_POST['role'] ?? '';
-        if ($id > 0 && in_array($role, ['admin', 'doctor', 'customer'], true)) {
-            $userModel->updateRole($id, $role);
-            $_SESSION['flash'] = 'Đã cập nhật quyền người dùng.';
-        }
-    } elseif ($module === 'appointments') {
+    if ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
         if ($id > 0) {
-            $appointmentModel->updateStatus($id, [
-                'status' => $_POST['status'] ?? 'pending',
-                'doctor_id' => $_POST['doctor_id'] !== '' ? (int)$_POST['doctor_id'] : null,
-                'appointment_date' => $_POST['appointment_date'] ?? null,
-                'notes' => trim($_POST['notes'] ?? ''),
-            ]);
-            $_SESSION['flash'] = 'Đã cập nhật lịch hẹn.';
+            if ($module === 'services') {
+                $serviceModel->delete($id);
+                $_SESSION['flash'] = 'Đã xóa dịch vụ.';
+            } elseif ($module === 'articles') {
+                $articleModel->delete($id);
+                $_SESSION['flash'] = 'Đã xóa bài viết.';
+            } elseif ($module === 'users') {
+                $userModel->delete($id);
+                $_SESSION['flash'] = 'Đã xóa người dùng.';
+            } elseif ($module === 'appointments') {
+                $appointmentModel->delete($id);
+                $_SESSION['flash'] = 'Đã xóa lịch hẹn.';
+            }
+        }
+    } else {
+        if ($module === 'services') {
+            $id = (int)($_POST['id'] ?? 0);
+            $data = [
+                'name' => trim($_POST['name'] ?? ''),
+                'price' => $_POST['price'] !== '' ? $_POST['price'] : null,
+                'description' => trim($_POST['description'] ?? ''),
+                'is_active' => (int)($_POST['is_active'] ?? 1),
+            ];
+            if ($id > 0) {
+                $serviceModel->update($id, $data);
+                $_SESSION['flash'] = 'Đã cập nhật dịch vụ.';
+            } else {
+                $serviceModel->create($data);
+                $_SESSION['flash'] = 'Đã thêm dịch vụ.';
+            }
+        } elseif ($module === 'articles') {
+            $id = (int)($_POST['id'] ?? 0);
+            $data = [
+                'title' => trim($_POST['title'] ?? ''),
+                'content' => trim($_POST['content'] ?? ''),
+                'category' => trim($_POST['category'] ?? 'news'),
+                'status' => $_POST['status'] ?? 'draft',
+                'author_id' => $user['id'],
+            ];
+            if ($id > 0) {
+                $articleModel->update($id, $data);
+                $_SESSION['flash'] = 'Đã cập nhật bài viết.';
+            } else {
+                $articleModel->create($data);
+                $_SESSION['flash'] = 'Đã thêm bài viết.';
+            }
+        } elseif ($module === 'users') {
+            $id = (int)($_POST['id'] ?? 0);
+            $role = $_POST['role'] ?? '';
+            if ($id > 0 && in_array($role, ['admin', 'doctor', 'customer'], true)) {
+                $userModel->updateRole($id, $role);
+                $_SESSION['flash'] = 'Đã cập nhật quyền người dùng.';
+            }
+        } elseif ($module === 'appointments') {
+            $id = (int)($_POST['id'] ?? 0);
+            if ($id > 0) {
+                $appointmentModel->updateStatus($id, [
+                    'status' => $_POST['status'] ?? 'pending',
+                    'doctor_id' => $_POST['doctor_id'] !== '' ? (int)$_POST['doctor_id'] : null,
+                    'appointment_date' => $_POST['appointment_date'] ?? null,
+                    'notes' => trim($_POST['notes'] ?? ''),
+                ]);
+                $_SESSION['flash'] = 'Đã cập nhật lịch hẹn.';
+            }
         }
     }
 

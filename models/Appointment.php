@@ -125,6 +125,12 @@ class Appointment
         ]);
     }
 
+    public function delete(int $id): bool
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM appointments WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
+    }
+
     public function requestReschedule(int $id, int $customerId, string $appointmentDate, ?string $note = null): bool
     {
         $stmt = $this->pdo->prepare('UPDATE appointments SET appointment_date = :appointment_date, status = "rescheduled", reschedule_request = :note, updated_at = NOW() WHERE id = :id AND customer_id = :customer_id');

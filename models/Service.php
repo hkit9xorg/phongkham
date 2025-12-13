@@ -82,6 +82,12 @@ class Service
         ]);
     }
 
+    public function delete(int $id): bool
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM services WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
+    }
+
     public function count(): int
     {
         $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM services');
