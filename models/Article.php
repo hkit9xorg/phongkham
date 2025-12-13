@@ -34,12 +34,13 @@ class Article
         $offset = ($page - 1) * $perPage;
         $like = '%' . $keyword . '%';
 
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM articles WHERE title LIKE :keyword OR content LIKE :keyword');
-        $stmt->execute([':keyword' => $like]);
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM articles WHERE title LIKE :title_keyword OR content LIKE :content_keyword');
+        $stmt->execute([':title_keyword' => $like, ':content_keyword' => $like]);
         $total = (int)$stmt->fetchColumn();
 
-        $stmt = $this->pdo->prepare("SELECT a.*, u.full_name AS author_name FROM articles a LEFT JOIN users u ON a.author_id = u.id WHERE a.title LIKE :keyword OR a.content LIKE :keyword ORDER BY a.updated_at DESC LIMIT :limit OFFSET :offset");
-        $stmt->bindValue(':keyword', $like, PDO::PARAM_STR);
+        $stmt = $this->pdo->prepare("SELECT a.*, u.full_name AS author_name FROM articles a LEFT JOIN users u ON a.author_id = u.id WHERE a.title LIKE :title_keyword OR a.content LIKE :content_keyword ORDER BY a.updated_at DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':title_keyword', $like, PDO::PARAM_STR);
+        $stmt->bindValue(':content_keyword', $like, PDO::PARAM_STR);
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
