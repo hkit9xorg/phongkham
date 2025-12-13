@@ -4,6 +4,7 @@ require_once __DIR__ . '/../helpers/Csrf.php';
 Env::load();
 $baseUrl = Env::get('APP_BASE_URL', '');
 $user = $_SESSION['user'] ?? null;
+$isHomePage = $isHomePage ?? false;
 ?>
 <!DOCTYPE html>
 <html lang="vi" data-theme="light">
@@ -111,10 +112,13 @@ $user = $_SESSION['user'] ?? null;
         </form>
     </dialog>
 
-    <a href="#booking" class="btn btn-primary btn-lg rounded-full shadow-xl fixed right-4 bottom-6 animate-bounce-subtle"><i class="ri-calendar-check-line mr-2"></i>Đặt lịch ngay</a>
+    <?php if ($isHomePage): ?>
+        <a href="#booking" class="btn btn-primary btn-lg rounded-full shadow-xl fixed right-4 bottom-6 animate-bounce-subtle"><i class="ri-calendar-check-line mr-2"></i>Đặt lịch ngay</a>
+    <?php endif; ?>
 
     <footer class="bg-base-100 border-t">
-        <div class="container mx-auto px-4 py-10 grid gap-8 lg:grid-cols-4">
+        <?php $footerGridClass = $isHomePage ? 'lg:grid-cols-4' : 'lg:grid-cols-3'; ?>
+        <div class="container mx-auto px-4 py-10 grid gap-8 md:grid-cols-2 <?= $footerGridClass ?>">
             <div class="space-y-3">
                 <div class="flex items-center gap-3">
                     <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-accent text-white grid place-items-center shadow-lg">
@@ -135,12 +139,18 @@ $user = $_SESSION['user'] ?? null;
             </div>
             <div>
                 <h3 class="font-semibold mb-3">Liên kết nhanh</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a class="link" href="#services">Dịch vụ nổi bật</a></li>
-                    <li><a class="link" href="#about">Giới thiệu</a></li>
-                    <li><a class="link" href="#team">Đội ngũ bác sĩ</a></li>
-                    <li><a class="link" href="#articles">Tin tức & tư vấn</a></li>
-                </ul>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <ul class="space-y-2">
+                        <li><a class="link" href="#home">Trang chủ</a></li>
+                        <li><a class="link" href="#services">Dịch vụ nổi bật</a></li>
+                        <li><a class="link" href="#pricing">Bảng giá</a></li>
+                    </ul>
+                    <ul class="space-y-2">
+                        <li><a class="link" href="#about">Giới thiệu</a></li>
+                        <li><a class="link" href="#team">Đội ngũ bác sĩ</a></li>
+                        <li><a class="link" href="#articles">Tin tức & tư vấn</a></li>
+                    </ul>
+                </div>
             </div>
             <div>
                 <h3 class="font-semibold mb-3">Liên hệ</h3>
@@ -151,12 +161,14 @@ $user = $_SESSION['user'] ?? null;
                     <li class="flex items-start gap-2"><i class="ri-time-line mt-1"></i><span>08:00 - 20:00 (T2 - CN)</span></li>
                 </ul>
             </div>
-            <div class="space-y-2">
-                <h3 class="font-semibold">Địa chỉ trên bản đồ</h3>
-                <div class="rounded-xl overflow-hidden shadow">
-                    <iframe class="w-full h-48" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.5092989647413!2d106.7009850767148!3d10.772215059271492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3fa6b0f3a7%3A0x22e7b83c89d12b21!2zMjMgTMaw4budbmcgVsSDbiBBbiwgU8OibiBUaOG7nSBIw6AsIFF14bqtbiAxLCBUUC4gSMOyIENow60gTWluaA!5e0!3m2!1svi!2svi!4v1716715700000!5m2!1svi!2svi" allowfullscreen="" loading="lazy"></iframe>
+            <?php if ($isHomePage): ?>
+                <div class="space-y-2">
+                    <h3 class="font-semibold">Địa chỉ trên bản đồ</h3>
+                    <div class="rounded-xl overflow-hidden shadow">
+                        <iframe class="w-full h-48" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.5092989647413!2d106.7009850767148!3d10.772215059271492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3fa6b0f3a7%3A0x22e7b83c89d12b21!2zMjMgTMaw4budbmcgVsSDbiBBbiwgU8OibiBUaOG7nSBIw6AsIFF14bqtbiAxLCBUUC4gSMOyIENow60gTWluaA!5e0!3m2!1svi!2svi!4v1716715700000!5m2!1svi!2svi" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
         <div class="border-t py-4 text-center text-sm text-base-content/70">© <?= date('Y') ?> SmileCare Clinic. All rights reserved.</div>
     </footer>
