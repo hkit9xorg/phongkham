@@ -72,7 +72,8 @@ $isHomePage = $isHomePage ?? false;
                     <div class="dropdown dropdown-end">
                         <label tabindex="0" class="btn btn-ghost btn-circle avatar">
                             <div class="w-10 rounded-full">
-                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=<?= urlencode($user['email']) ?>" alt="avatar">
+                                <?php $avatarSeed = $user['email'] ?? $user['phone'] ?? $user['name']; ?>
+                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=<?= urlencode($avatarSeed) ?>" alt="avatar">
                             </div>
                         </label>
                         <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
@@ -91,7 +92,7 @@ $isHomePage = $isHomePage ?? false;
     <main class="bg-gradient-to-b from-base-200 via-base-100 to-base-200">
         <div class="container mx-auto px-4 py-8 space-y-10" id="home">
         <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-info shadow-lg mb-4">
+            <div class="alert alert-info shadow-lg mb-4" data-flash="true">
                 <div>
                     <i class="ri-information-line"></i>
                     <span><?= htmlspecialchars($_SESSION['flash']); unset($_SESSION['flash']); ?></span>

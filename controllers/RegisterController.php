@@ -10,44 +10,48 @@ $success = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName = trim($_POST['full_name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $passwordConfirm = $_POST['password_confirm'] ?? '';
     $token = $_POST['csrf_token'] ?? '';
-    $fixedHash = '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa';
 
     if (!Csrf::verify($token)) {
         $errors[] = 'CSRF token không hợp lệ.';
     }
 
-    if ($fullName === '' || $email === '') {
-        $errors[] = 'Họ tên và email là bắt buộc.';
+    if ($fullName === '' || $phone === '') {
+        $errors[] = 'Họ tên và số điện thoại là bắt buộc.';
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Email không hợp lệ.';
+    if ($password === '' || $passwordConfirm === '') {
+        $errors[] = 'Vui lòng nhập mật khẩu và xác nhận mật khẩu.';
+    } elseif ($password !== $passwordConfirm) {
+        $errors[] = 'Mật khẩu nhập lại không khớp.';
     }
 
     $userModel = new User($pdo);
-    if (!$errors && $userModel->findByEmail($email)) {
-        $errors[] = 'Email đã tồn tại trong hệ thống.';
+    if (!$errors && $userModel->findByPhone($phone)) {
+        $errors[] = 'Số điện thoại đã được đăng ký.';
     }
 
     if (!$errors) {
+        $emailFallback = $phone . '@smilecare.local';
         $userId = $userModel->createCustomer([
             'full_name' => $fullName,
-            'email' => $email,
+            'email' => $emailFallback,
             'phone' => $phone,
-            'password_hash' => $fixedHash,
+            'password_hash' => password_hash($password, PASSWORD_BCRYPT),
         ]);
         $patientModel = new Patient($pdo);
         $patientModel->create($userId, []);
         $_SESSION['user'] = [
             'id' => $userId,
             'name' => $fullName,
-            'email' => $email,
+            'email' => $emailFallback,
+            'phone' => $phone,
             'role' => 'customer',
         ];
-        $success = 'Đăng ký thành công, mật khẩu mặc định: 123456. Bạn đã được đăng nhập.';
+        $success = 'Đăng ký thành công. Bạn đã được đăng nhập với vai trò khách hàng.';
     }
 }
 

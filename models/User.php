@@ -25,9 +25,17 @@ class User
         return $user ?: null;
     }
 
+    public function findByPhone(string $phone): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE phone = :phone LIMIT 1');
+        $stmt->execute([':phone' => $phone]);
+        $user = $stmt->fetch();
+        return $user ?: null;
+    }
+
     public function createCustomer(array $data): int
     {
-        $sql = 'INSERT INTO users (full_name, email, phone, password_hash, role, is_active, created_at, updated_at) 
+        $sql = 'INSERT INTO users (full_name, email, phone, password_hash, role, is_active, created_at, updated_at)
                 VALUES (:full_name, :email, :phone, :password_hash, "customer", 1, NOW(), NOW())';
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
@@ -86,6 +94,27 @@ class User
         ];
     }
 
+    public function paginate(string $keyword = '', int $page = 1, int $perPage = 10): array
+    {
+        $offset = ($page - 1) * $perPage;
+        $like = '%' . $keyword . '%';
+
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE full_name LIKE :keyword OR email LIKE :keyword OR phone LIKE :keyword');
+        $stmt->execute([':keyword' => $like]);
+        $total = (int)$stmt->fetchColumn();
+
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE full_name LIKE :keyword OR email LIKE :keyword OR phone LIKE :keyword ORDER BY created_at DESC LIMIT :limit OFFSET :offset');
+        $stmt->bindValue(':keyword', $like, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data' => $stmt->fetchAll(),
+            'total' => $total,
+        ];
+    }
+
     public function countAll(): int
     {
         $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM users');
@@ -104,5 +133,14 @@ class User
         }
 
         return $counts;
+    }
+
+    public function updateRole(int $id, string $role): bool
+    {
+        $stmt = $this->pdo->prepare('UPDATE users SET role = :role, updated_at = NOW() WHERE id = :id');
+        return $stmt->execute([
+            ':id' => $id,
+            ':role' => $role,
+        ]);
     }
 }

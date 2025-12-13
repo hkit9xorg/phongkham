@@ -1,6 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+    document.querySelectorAll('[data-flash="true"]').forEach((alert) => {
+        setTimeout(() => {
+            alert.classList.add('animate-fade-out');
+            alert.addEventListener('animationend', () => alert.remove());
+        }, 3200);
+    });
+
     const showModal = (title, body) => {
         const modal = document.getElementById('modal-message');
         document.getElementById('modal-title').textContent = title;
@@ -118,6 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
             payload.id = form.dataset.id;
             const res = await apiFetch('/api/appointment_status.php', { method: 'POST', body: JSON.stringify(payload) });
             showModal(res.status === 'success' ? 'Đã cập nhật' : 'Lỗi', res.message);
+        });
+    });
+
+    document.querySelectorAll('.appointment-reschedule-form').forEach((form) => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = Object.fromEntries(new FormData(form).entries());
+            payload.id = form.dataset.id;
+            const res = await apiFetch('/api/appointment_reschedule.php', { method: 'POST', body: JSON.stringify(payload) });
+            showModal(res.status === 'success' ? 'Đã gửi yêu cầu' : 'Lỗi', res.message);
         });
     });
 

@@ -2,7 +2,7 @@
     <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
             <h2 class="card-title"><i class="ri-shield-keyhole-line mr-2"></i>Đăng nhập</h2>
-            <p class="text-sm text-gray-500">Tài khoản mẫu: admin@example.com, doctor@example.com, user@example.com. Mật khẩu mặc định: 123456.</p>
+            <p class="text-sm text-gray-500">Tài khoản mẫu: 0901000100 (admin), 0902000200 (bác sĩ), 0903000300 (khách hàng). Mật khẩu mặc định: 123456.</p>
             <?php if ($errors): ?>
                 <div class="alert alert-error">
                     <ul class="list-disc ml-4">
@@ -15,8 +15,8 @@
             <form method="POST" class="space-y-4">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                 <div class="form-control">
-                    <label class="label"><span class="label-text">Email</span></label>
-                    <input type="email" name="email" class="input input-bordered" required placeholder="admin@example.com">
+                    <label class="label"><span class="label-text">Số điện thoại</span></label>
+                    <input type="tel" name="phone" class="input input-bordered" required placeholder="0901000100">
                 </div>
                 <div class="form-control">
                     <label class="label"><span class="label-text">Mật khẩu</span></label>
