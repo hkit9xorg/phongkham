@@ -34,14 +34,20 @@ class Service
         $offset = ($page - 1) * $perPage;
         $like = '%' . $keyword . '%';
 
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM services WHERE name LIKE :keyword OR description LIKE :keyword');
-        $stmt->execute([':keyword' => $like]);
+        $stmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM services WHERE name LIKE :name_keyword OR description LIKE :description_keyword'
+        );
+        $stmt->execute([
+            ':name_keyword' => $like,
+            ':description_keyword' => $like,
+        ]);
         $total = (int)$stmt->fetchColumn();
 
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM services WHERE name LIKE :keyword OR description LIKE :keyword ORDER BY updated_at DESC LIMIT :limit OFFSET :offset'
+            'SELECT * FROM services WHERE name LIKE :name_keyword OR description LIKE :description_keyword ORDER BY updated_at DESC LIMIT :limit OFFSET :offset'
         );
-        $stmt->bindValue(':keyword', $like, \PDO::PARAM_STR);
+        $stmt->bindValue(':name_keyword', $like, \PDO::PARAM_STR);
+        $stmt->bindValue(':description_keyword', $like, \PDO::PARAM_STR);
         $stmt->bindValue(':limit', $perPage, \PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
         $stmt->execute();
