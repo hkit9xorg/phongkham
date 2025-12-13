@@ -38,10 +38,12 @@ class Service
         $stmt->execute([':keyword' => $like]);
         $total = (int)$stmt->fetchColumn();
 
-        $stmt = $this->pdo->prepare('SELECT * FROM services WHERE name LIKE :keyword OR description LIKE :keyword ORDER BY updated_at DESC LIMIT :limit OFFSET :offset');
-        $stmt->bindValue(':keyword', $like, PDO::PARAM_STR);
-        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM services WHERE name LIKE :keyword OR description LIKE :keyword ORDER BY updated_at DESC LIMIT :limit OFFSET :offset'
+        );
+        $stmt->bindValue(':keyword', $like, \PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $perPage, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
         $stmt->execute();
 
         return [
