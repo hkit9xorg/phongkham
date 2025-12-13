@@ -24,6 +24,7 @@ $stats = [
 ];
 
 $title = 'Phòng khám nha khoa - Trang chủ';
+$isHomePage = true;
 ob_start();
 include __DIR__ . '/../views/home.php';
 $content = ob_get_clean();
