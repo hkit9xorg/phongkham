@@ -80,4 +80,11 @@ class Service
         $row = $stmt->fetch();
         return (int)($row['total'] ?? 0);
     }
+
+    public function countActive(): int
+    {
+        $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM services WHERE is_active = 1');
+        $row = $stmt->fetch();
+        return (int)($row['total'] ?? 0);
+    }
 }

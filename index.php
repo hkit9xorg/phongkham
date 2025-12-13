@@ -12,6 +12,12 @@ switch ($page) {
     case 'dashboard':
         require __DIR__ . '/controllers/DashboardController.php';
         break;
+    case 'create_service':
+        require __DIR__ . '/controllers/ServiceCreateController.php';
+        break;
+    case 'create_article':
+        require __DIR__ . '/controllers/ArticleCreateController.php';
+        break;
     case 'admin':
         require __DIR__ . '/controllers/AdminController.php';
         break;

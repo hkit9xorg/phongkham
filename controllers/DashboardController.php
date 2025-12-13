@@ -31,6 +31,14 @@ $stats = [
     'appointments' => $appointmentModel->count(),
 ];
 
+$appointmentStatusCounts = $appointmentModel->countByStatus();
+$activeServices = $serviceModel->countActive();
+$serviceVisibility = [
+    'active' => $activeServices,
+    'hidden' => max(0, $serviceModel->count() - $activeServices),
+];
+$roleDistribution = $userModel->countByRole();
+
 $appointments = [];
 $doctorSchedules = [];
 $patientProfile = null;

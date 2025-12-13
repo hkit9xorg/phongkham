@@ -132,6 +132,19 @@ class Appointment
         return (int)($row['total'] ?? 0);
     }
 
+    public function countByStatus(): array
+    {
+        $stmt = $this->pdo->query('SELECT status, COUNT(*) AS total FROM appointments GROUP BY status');
+        $results = $stmt->fetchAll();
+
+        $counts = [];
+        foreach ($results as $row) {
+            $counts[$row['status']] = (int)$row['total'];
+        }
+
+        return $counts;
+    }
+
     public function getOccupiedSlots(int $doctorId, string $date): array
     {
         $stmt = $this->pdo->prepare(
