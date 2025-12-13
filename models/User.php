@@ -77,13 +77,14 @@ class User
         $offset = ($page - 1) * $perPage;
         $like = '%' . $keyword . '%';
 
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE role = :role AND (full_name LIKE :keyword OR email LIKE :keyword)');
-        $stmt->execute([':role' => $role, ':keyword' => $like]);
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE role = :role AND (full_name LIKE :full_name OR email LIKE :email)');
+        $stmt->execute([':role' => $role, ':full_name' => $like, ':email' => $like]);
         $total = (int)$stmt->fetchColumn();
 
-        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE role = :role AND (full_name LIKE :keyword OR email LIKE :keyword) ORDER BY created_at DESC LIMIT :limit OFFSET :offset');
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE role = :role AND (full_name LIKE :full_name OR email LIKE :email) ORDER BY created_at DESC LIMIT :limit OFFSET :offset');
         $stmt->bindValue(':role', $role, PDO::PARAM_STR);
-        $stmt->bindValue(':keyword', $like, PDO::PARAM_STR);
+        $stmt->bindValue(':full_name', $like, PDO::PARAM_STR);
+        $stmt->bindValue(':email', $like, PDO::PARAM_STR);
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -99,12 +100,14 @@ class User
         $offset = ($page - 1) * $perPage;
         $like = '%' . $keyword . '%';
 
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE full_name LIKE :keyword OR email LIKE :keyword OR phone LIKE :keyword');
-        $stmt->execute([':keyword' => $like]);
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM users WHERE full_name LIKE :full_name OR email LIKE :email OR phone LIKE :phone');
+        $stmt->execute([':full_name' => $like, ':email' => $like, ':phone' => $like]);
         $total = (int)$stmt->fetchColumn();
 
-        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE full_name LIKE :keyword OR email LIKE :keyword OR phone LIKE :keyword ORDER BY created_at DESC LIMIT :limit OFFSET :offset');
-        $stmt->bindValue(':keyword', $like, PDO::PARAM_STR);
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE full_name LIKE :full_name OR email LIKE :email OR phone LIKE :phone ORDER BY created_at DESC LIMIT :limit OFFSET :offset');
+        $stmt->bindValue(':full_name', $like, PDO::PARAM_STR);
+        $stmt->bindValue(':email', $like, PDO::PARAM_STR);
+        $stmt->bindValue(':phone', $like, PDO::PARAM_STR);
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();

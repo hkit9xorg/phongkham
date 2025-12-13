@@ -72,8 +72,11 @@ class Appointment
         $status = $filters['status'] ?? '';
         $doctorId = $filters['doctor_id'] ?? null;
 
-        $where = ['(a.full_name LIKE :keyword OR a.phone LIKE :keyword)'];
-        $params = [':keyword' => $keyword];
+        $where = ['(a.full_name LIKE :full_name OR a.phone LIKE :phone)'];
+        $params = [
+            ':full_name' => $keyword,
+            ':phone' => $keyword,
+        ];
 
         if ($status !== '') {
             $where[] = 'a.status = :status';
