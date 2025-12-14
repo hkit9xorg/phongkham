@@ -4,23 +4,25 @@ require_once __DIR__ . '/../models/Service.php';
 require_once __DIR__ . '/../models/Article.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Appointment.php';
+require_once __DIR__ . '/../models/Doctor.php';
 require_once __DIR__ . '/../helpers/Csrf.php';
 
 $serviceModel = new Service($pdo);
 $articleModel = new Article($pdo);
 $userModel = new User($pdo);
 $appointmentModel = new Appointment($pdo);
+$doctorModel = new Doctor($pdo);
 
 $services = $serviceModel->allActive();
 $articles = $articleModel->published();
-$doctors = $userModel->listDoctors();
+$doctors = $doctorModel->allActive();
 
 $stats = [
     'customers' => $userModel->countAll(),
     'services' => $serviceModel->count(),
     'articles' => $articleModel->count(),
     'appointments' => $appointmentModel->count(),
-    'doctors' => count($doctors),
+    'doctors' => $doctorModel->countActive(),
 ];
 
 $title = 'Phòng khám nha khoa - Trang chủ';

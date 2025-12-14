@@ -4,6 +4,7 @@ require_once __DIR__ . '/../models/Service.php';
 require_once __DIR__ . '/../models/Article.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Appointment.php';
+require_once __DIR__ . '/../models/Doctor.php';
 require_once __DIR__ . '/../helpers/Csrf.php';
 require_once __DIR__ . '/../helpers/Auth.php';
 require_once __DIR__ . '/../helpers/Upload.php';
@@ -18,6 +19,7 @@ $serviceModel = new Service($pdo);
 $articleModel = new Article($pdo);
 $userModel = new User($pdo);
 $appointmentModel = new Appointment($pdo);
+$doctorModel = new Doctor($pdo);
 
 $module = $_GET['module'] ?? 'services';
 $page = max(1, (int)($_GET['p'] ?? 1));
@@ -47,6 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } elseif ($module === 'users') {
                 $userModel->delete($id);
                 $_SESSION['flash'] = 'Đã xóa người dùng.';
+            } elseif ($module === 'doctors') {
+                $doctorModel->delete($id);
+                $_SESSION['flash'] = 'Đã xóa hồ sơ bác sĩ.';
             } elseif ($module === 'appointments') {
                 $appointmentModel->delete($id);
                 $_SESSION['flash'] = 'Đã xóa lịch hẹn.';
@@ -100,6 +105,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $articleModel->create($data);
                 $_SESSION['flash'] = 'Đã thêm bài viết.';
             }
+        } elseif ($module === 'doctors') {
+            $id = (int)($_POST['id'] ?? 0);
+            $data = [
+                'full_name' => trim($_POST['full_name'] ?? ''),
+                'academic_title' => trim($_POST['academic_title'] ?? ''),
+                'specialty' => trim($_POST['specialty'] ?? ''),
+                'avatar_url' => trim($_POST['avatar_url'] ?? ''),
+                'philosophy' => trim($_POST['philosophy'] ?? ''),
+                'joined_at' => $_POST['joined_at'] ?? null,
+                'is_active' => (int)($_POST['is_active'] ?? 1),
+            ];
+
+            if ($id > 0) {
+                $doctorModel->update($id, $data);
+                $_SESSION['flash'] = 'Đã cập nhật bác sĩ.';
+            } else {
+                $doctorModel->create($data);
+                $_SESSION['flash'] = 'Đã thêm bác sĩ.';
+            }
         } elseif ($module === 'users') {
             $id = (int)($_POST['id'] ?? 0);
             $role = $_POST['role'] ?? '';
@@ -131,6 +155,8 @@ if (isset($_GET['edit_id'])) {
         $currentRecord = $serviceModel->findById($editId);
     } elseif ($module === 'articles') {
         $currentRecord = $articleModel->findById($editId);
+    } elseif ($module === 'doctors') {
+        $currentRecord = $doctorModel->findById($editId);
     } elseif ($module === 'users') {
         $currentRecord = $userModel->findById($editId);
     } elseif ($module === 'appointments') {
@@ -144,6 +170,10 @@ if ($module === 'services') {
     $total = $result['total'];
 } elseif ($module === 'articles') {
     $result = $articleModel->searchPaginated($keyword, $page, $perPage);
+    $items = $result['data'];
+    $total = $result['total'];
+} elseif ($module === 'doctors') {
+    $result = $doctorModel->searchPaginated($keyword, $page, $perPage);
     $items = $result['data'];
     $total = $result['total'];
 } elseif ($module === 'users') {
@@ -161,7 +191,7 @@ if ($module === 'services') {
 }
 
 $totalPages = max(1, (int)ceil($total / $perPage));
-$doctors = $userModel->listDoctors();
+$doctorUsers = $userModel->listDoctors();
 
 $title = 'Quản trị chi tiết';
 ob_start();
