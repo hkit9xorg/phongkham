@@ -26,6 +26,52 @@ document.addEventListener('DOMContentLoaded', () => {
         return res.json();
     };
 
+    const syncWysiwygEditors = () => {
+        document.querySelectorAll('[data-wysiwyg]').forEach((wrapper) => {
+            const editor = wrapper.querySelector('[data-editor]');
+            const textarea = wrapper.querySelector('textarea');
+            if (editor && textarea) {
+                textarea.value = editor.innerHTML.trim();
+            }
+        });
+    };
+
+    const initWysiwygEditors = () => {
+        document.querySelectorAll('[data-wysiwyg]').forEach((wrapper) => {
+            if (wrapper.dataset.initialized === 'true') return;
+            const editor = wrapper.querySelector('[data-editor]');
+            const textarea = wrapper.querySelector('textarea');
+            if (!editor || !textarea) return;
+
+            editor.innerHTML = textarea.value;
+
+            wrapper.querySelectorAll('[data-command]').forEach((btn) => {
+                btn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const cmd = btn.dataset.command;
+                    if (cmd === 'createLink') {
+                        const url = prompt('Nhập đường dẫn:');
+                        if (url) {
+                            document.execCommand(cmd, false, url);
+                        }
+                    } else {
+                        document.execCommand(cmd, false, null);
+                    }
+                    editor.focus();
+                    textarea.value = editor.innerHTML.trim();
+                });
+            });
+
+            editor.addEventListener('input', () => {
+                textarea.value = editor.innerHTML.trim();
+            });
+
+            wrapper.dataset.initialized = 'true';
+        });
+    };
+
+    initWysiwygEditors();
+
     const bookingForm = document.getElementById('booking-form');
     if (bookingForm) {
         bookingForm.addEventListener('submit', async (e) => {
@@ -107,13 +153,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const articleForm = document.getElementById('article-form');
     if (articleForm) {
+        const thumbInput = articleForm.querySelector('input[name="thumbnail"]');
+        const thumbPreview = articleForm.querySelector('[data-preview-thumb]');
+
+        if (thumbInput && thumbPreview) {
+            thumbInput.addEventListener('change', (event) => {
+                const file = event.target.files?.[0];
+                if (file) {
+                    thumbPreview.src = URL.createObjectURL(file);
+                    thumbPreview.classList.remove('hidden');
+                } else {
+                    thumbPreview.src = '';
+                    thumbPreview.classList.add('hidden');
+                }
+            });
+        }
+
         articleForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const data = Object.fromEntries(new FormData(articleForm).entries());
-            const res = await apiFetch('/api/articles.php', { method: 'POST', body: JSON.stringify(data) });
-            showModal(res.status === 'success' ? 'Đã lưu' : 'Lỗi', res.message);
-            if (res.status === 'success') {
-                location.reload();
+            syncWysiwygEditors();
+            const formData = new FormData(articleForm);
+
+            try {
+                const response = await fetch('/api/articles.php', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrf },
+                    body: formData,
+                });
+                const res = await response.json();
+                showModal(res.status === 'success' ? 'Đã lưu' : 'Lỗi', res.message);
+                if (res.status === 'success') {
+                    articleForm.reset();
+                    if (thumbPreview) {
+                        thumbPreview.src = '';
+                        thumbPreview.classList.add('hidden');
+                    }
+                    document.querySelectorAll('[data-wysiwyg]').forEach((wrapper) => {
+                        wrapper.dataset.initialized = '';
+                        const editor = wrapper.querySelector('[data-editor]');
+                        const textarea = wrapper.querySelector('textarea');
+                        if (editor) editor.innerHTML = '';
+                        if (textarea) textarea.value = '';
+                    });
+                    initWysiwygEditors();
+                }
+            } catch (error) {
+                showModal('Lỗi', 'Không thể lưu bài viết.');
             }
         });
     }
