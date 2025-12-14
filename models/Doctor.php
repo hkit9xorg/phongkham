@@ -73,15 +73,19 @@ class Doctor
         $offset = ($page - 1) * $perPage;
         $like = '%' . $keyword . '%';
 
-        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM doctors WHERE full_name LIKE :kw OR specialty LIKE :kw');
-        $stmt->execute([':kw' => $like]);
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM doctors WHERE full_name LIKE :kw_name OR specialty LIKE :kw_specialty');
+        $stmt->execute([
+            ':kw_name' => $like,
+            ':kw_specialty' => $like,
+        ]);
         $total = (int)$stmt->fetchColumn();
 
         $stmt = $this->pdo->prepare('SELECT * FROM doctors
-            WHERE full_name LIKE :kw OR specialty LIKE :kw
+            WHERE full_name LIKE :kw_name OR specialty LIKE :kw_specialty
             ORDER BY joined_at DESC, created_at DESC
             LIMIT :limit OFFSET :offset');
-        $stmt->bindValue(':kw', $like, \PDO::PARAM_STR);
+        $stmt->bindValue(':kw_name', $like, \PDO::PARAM_STR);
+        $stmt->bindValue(':kw_specialty', $like, \PDO::PARAM_STR);
         $stmt->bindValue(':limit', $perPage, \PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
         $stmt->execute();
