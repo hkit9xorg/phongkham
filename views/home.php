@@ -138,10 +138,10 @@ if (empty($teamMembers)) {
             <button class="btn btn-outline btn-sm" data-target="services-slider" data-next><i class="ri-arrow-right-s-line"></i></button>
         </div>
     </div>
-    <div class="auto-slider" id="services-slider" data-auto-slider data-interval="4500">
+    <div class="auto-slider" id="services-slider" data-auto-slider data-interval="4500" data-visible="4">
         <div class="slider-track flex gap-4 overflow-hidden" data-track>
             <?php foreach ($featuredServices as $index => $service): ?>
-                <div class="card bg-base-100 shadow service-card min-w-[280px] md:min-w-[320px]" data-slide <?= $index === 0 ? 'data-active' : '' ?> data-group="services-slider">
+                <div class="card bg-base-100 shadow service-card min-w-[220px] md:min-w-[240px] lg:min-w-[260px]" data-slide <?= $index === 0 ? 'data-active' : '' ?> data-group="services-slider">
                     <div class="card-body space-y-3">
                         <div class="flex items-center gap-3">
                             <div class="h-12 w-12 rounded-xl bg-accent/10 text-accent grid place-items-center text-2xl"><i class="ri-shield-star-line"></i></div>
@@ -246,10 +246,10 @@ if (empty($teamMembers)) {
             <button class="btn btn-outline btn-sm" data-target="team-slider" data-next><i class="ri-arrow-right-s-line"></i></button>
         </div>
     </div>
-    <div class="auto-slider" id="team-slider" data-auto-slider data-interval="5000">
+    <div class="auto-slider" id="team-slider" data-auto-slider data-interval="5000" data-visible="4">
         <div class="slider-track flex gap-4 overflow-hidden" data-track>
             <?php foreach ($teamMembers as $index => $member): ?>
-                <div class="card bg-base-100 shadow team-card min-w-[260px]" data-slide <?= $index === 0 ? 'data-active' : '' ?> data-group="team-slider">
+                <div class="card bg-base-100 shadow team-card min-w-[220px] md:min-w-[240px] lg:min-w-[260px]" data-slide <?= $index === 0 ? 'data-active' : '' ?> data-group="team-slider">
                     <div class="card-body items-center text-center space-y-3">
                         <div class="avatar">
                             <div class="w-20 h-20 rounded-full ring ring-primary ring-offset-2">
@@ -334,10 +334,10 @@ if (empty($teamMembers)) {
             <button class="btn btn-outline btn-sm" data-target="article-slider" data-next><i class="ri-arrow-right-s-line"></i></button>
         </div>
     </div>
-    <div class="auto-slider" id="article-slider" data-auto-slider data-interval="5000">
+    <div class="auto-slider" id="article-slider" data-auto-slider data-interval="5000" data-visible="4">
         <div class="slider-track flex gap-4 overflow-hidden" data-track>
             <?php foreach ($articles as $index => $article): ?>
-                <div class="card bg-base-100 shadow article-card min-w-[280px] md:min-w-[320px]" data-slide <?= $index === 0 ? 'data-active' : '' ?> data-group="article-slider">
+                <div class="card bg-base-100 shadow article-card min-w-[220px] md:min-w-[240px] lg:min-w-[260px]" data-slide <?= $index === 0 ? 'data-active' : '' ?> data-group="article-slider">
                     <?php if (!empty($article['thumbnail'])): ?>
                         <img src="<?= htmlspecialchars($article['thumbnail']) ?>" alt="<?= htmlspecialchars($article['title']) ?>" class="h-40 w-full object-cover">
                     <?php endif; ?>
