@@ -260,6 +260,18 @@
                 </label>
             <?php elseif ($module === 'doctors'): ?>
                 <label class="form-control">
+                    <span class="label-text">Tài khoản bác sĩ (tùy chọn)</span>
+                    <select name="user_id" class="select select-bordered">
+                        <option value="">Chưa liên kết</option>
+                        <?php foreach ($doctorUsers as $doctorUser): ?>
+                            <option value="<?= (int)$doctorUser['id'] ?>" <?= ($currentRecord['user_id'] ?? null) == $doctorUser['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($doctorUser['full_name']) ?> - <?= htmlspecialchars($doctorUser['email'] ?? '') ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <p class="text-xs text-base-content/60">Chọn tài khoản có vai trò bác sĩ để đồng bộ thông tin.</p>
+                </label>
+                <label class="form-control">
                     <span class="label-text">Họ tên</span>
                     <input name="full_name" class="input input-bordered" required value="<?= htmlspecialchars($currentRecord['full_name'] ?? '') ?>">
                 </label>
@@ -319,7 +331,7 @@
                         <span class="label-text">Bác sĩ phụ trách</span>
                         <select name="doctor_id" class="select select-bordered">
                             <option value="">Chưa gán</option>
-                            <?php foreach ($doctorUsers as $doc): ?>
+                            <?php foreach ($doctorProfiles as $doc): ?>
                                 <option value="<?= $doc['id'] ?>" <?= ($currentRecord['doctor_id'] ?? null) == $doc['id'] ? 'selected' : '' ?>><?= htmlspecialchars($doc['full_name']) ?></option>
                             <?php endforeach; ?>
                         </select>

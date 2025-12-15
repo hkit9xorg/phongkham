@@ -6,6 +6,7 @@ require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Appointment.php';
 require_once __DIR__ . '/../models/DoctorSchedule.php';
 require_once __DIR__ . '/../models/Patient.php';
+require_once __DIR__ . '/../models/Doctor.php';
 require_once __DIR__ . '/../helpers/Csrf.php';
 require_once __DIR__ . '/../helpers/Auth.php';
 
@@ -21,6 +22,7 @@ $userModel = new User($pdo);
 $appointmentModel = new Appointment($pdo);
 $scheduleModel = new DoctorSchedule($pdo);
 $patientModel = new Patient($pdo);
+$doctorModel = new Doctor($pdo);
 
 $userDetails = $userModel->findById($user['id']);
 
@@ -45,6 +47,7 @@ $customerAppointments = [];
 $appointmentHistory = [];
 $doctorSchedules = [];
 $patientProfile = null;
+$doctorProfile = null;
 if ($user['role'] === 'customer') {
     $appointments = $appointmentModel->listForUser($user['id']);
     $customerAppointments = array_filter($appointments, static function ($appointment) {
@@ -55,12 +58,15 @@ if ($user['role'] === 'customer') {
     });
     $patientProfile = $patientModel->findByUserId($user['id']);
 } elseif ($user['role'] === 'doctor') {
-    $appointments = $appointmentModel->listForDoctor($user['id']);
-    $doctorSchedules = $scheduleModel->listForDoctor($user['id']);
-    $doctorStats = [
-        'appointments' => count($appointments),
-        'schedules' => count($doctorSchedules),
-    ];
+    $doctorProfile = $doctorModel->findByUserId($user['id']);
+    if ($doctorProfile) {
+        $appointments = $appointmentModel->listForDoctor((int)$doctorProfile['id']);
+        $doctorSchedules = $scheduleModel->listForDoctor((int)$doctorProfile['id']);
+        $doctorStats = [
+            'appointments' => count($appointments),
+            'schedules' => count($doctorSchedules),
+        ];
+    }
 } else {
     $appointments = $appointmentModel->all();
 }
