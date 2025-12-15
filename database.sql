@@ -40,6 +40,7 @@ CREATE TABLE articles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
+    thumbnail VARCHAR(255) NULL,
     category VARCHAR(100) DEFAULT 'news',
     status ENUM('draft','published') DEFAULT 'draft',
     author_id INT NULL,
@@ -109,10 +110,10 @@ VALUES
 ('Tẩy trắng răng', 'Công nghệ Plasma không ê buốt, thực hiện trong 60 phút.', 1200000, 1),
 ('Niềng răng Invisalign', 'Phác đồ trong suốt, thẩm mỹ cao, tái khám định kỳ.', 15000000, 1);
 
-INSERT INTO articles (title, content, category, status, author_id)
+INSERT INTO articles (title, content, category, status, author_id, thumbnail)
 VALUES
-('5 bước chăm sóc răng miệng tại nhà', 'Đánh răng 2 lần/ngày, dùng chỉ nha khoa và nước súc miệng.', 'tuvan', 'published', 2),
-('Khi nào cần tẩy trắng răng?', 'Tẩy trắng giúp răng sáng hơn 2-3 tone, nên thực hiện tại phòng khám uy tín.', 'tintuc', 'published', 2);
+('5 bước chăm sóc răng miệng tại nhà', 'Đánh răng 2 lần/ngày, dùng chỉ nha khoa và nước súc miệng.', 'tuvan', 'published', 2, NULL),
+('Khi nào cần tẩy trắng răng?', 'Tẩy trắng giúp răng sáng hơn 2-3 tone, nên thực hiện tại phòng khám uy tín.', 'tintuc', 'published', 2, NULL);
 
 INSERT INTO doctors (full_name, academic_title, specialty, avatar_url, philosophy, joined_at)
 VALUES

@@ -73,10 +73,17 @@
                 </table>
             <?php elseif ($module === 'articles'): ?>
                 <table class="table">
-                    <thead><tr><th>Tiêu đề</th><th>Trạng thái</th><th>Tác giả</th><th class="text-right">Thao tác</th></tr></thead>
+                    <thead><tr><th>Ảnh</th><th>Tiêu đề</th><th>Trạng thái</th><th>Tác giả</th><th class="text-right">Thao tác</th></tr></thead>
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
+                                <td>
+                                    <?php if (!empty($item['thumbnail'])): ?>
+                                        <img src="<?= htmlspecialchars($item['thumbnail']) ?>" alt="<?= htmlspecialchars($item['title']) ?>" class="h-12 w-16 object-cover rounded">
+                                    <?php else: ?>
+                                        <div class="badge badge-ghost">Không ảnh</div>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= htmlspecialchars($item['title']) ?></td>
                                 <td><?= htmlspecialchars($item['status']) ?></td>
                                 <td><?= htmlspecialchars($item['author_name'] ?? '') ?></td>
@@ -184,7 +191,7 @@
     </div>
     <div class="bg-base-100 p-4 rounded-box shadow">
         <h2 class="text-xl font-semibold mb-3"><?= $currentRecord ? 'Chỉnh sửa' : 'Thêm mới' ?></h2>
-        <form method="post" class="space-y-3">
+        <form method="post" enctype="multipart/form-data" class="space-y-3">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
             <input type="hidden" name="id" value="<?= htmlspecialchars($currentRecord['id'] ?? '') ?>">
             <?php if ($module === 'services'): ?>
@@ -216,10 +223,22 @@
                     <span class="label-text">Chuyên mục</span>
                     <input name="category" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['category'] ?? 'news') ?>">
                 </label>
-                <label class="form-control">
-                    <span class="label-text">Nội dung</span>
-                    <textarea name="content" class="textarea textarea-bordered" rows="4" required><?= htmlspecialchars($currentRecord['content'] ?? '') ?></textarea>
-                </label>
+                <div class="form-control" data-wysiwyg>
+                    <label class="label flex items-center justify-between">
+                        <span class="label-text">Nội dung</span>
+                        <span class="text-xs text-base-content/60">Hỗ trợ định dạng cơ bản</span>
+                    </label>
+                    <div class="wysiwyg-toolbar mb-2">
+                        <button type="button" class="btn btn-xs" data-command="bold"><i class="ri-bold"></i></button>
+                        <button type="button" class="btn btn-xs" data-command="italic"><i class="ri-italic"></i></button>
+                        <button type="button" class="btn btn-xs" data-command="underline"><i class="ri-underline"></i></button>
+                        <button type="button" class="btn btn-xs" data-command="insertUnorderedList"><i class="ri-list-unordered"></i></button>
+                        <button type="button" class="btn btn-xs" data-command="insertOrderedList"><i class="ri-list-ordered"></i></button>
+                        <button type="button" class="btn btn-xs" data-command="createLink"><i class="ri-link"></i></button>
+                    </div>
+                    <div class="wysiwyg-editor" data-editor contenteditable="true" aria-label="Soạn nội dung bài viết"><?= htmlspecialchars($currentRecord['content'] ?? '') ?></div>
+                    <textarea name="content" class="textarea textarea-bordered hidden" rows="4" required><?= htmlspecialchars($currentRecord['content'] ?? '') ?></textarea>
+                </div>
                 <label class="form-control">
                     <span class="label-text">Trạng thái</span>
                     <select name="status" class="select select-bordered">

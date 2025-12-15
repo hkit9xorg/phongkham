@@ -7,6 +7,7 @@ require_once __DIR__ . '/../models/Appointment.php';
 require_once __DIR__ . '/../models/Doctor.php';
 require_once __DIR__ . '/../helpers/Csrf.php';
 require_once __DIR__ . '/../helpers/Auth.php';
+require_once __DIR__ . '/../helpers/Upload.php';
 
 $user = Auth::user();
 if (!$user || $user['role'] !== 'admin') {
@@ -74,12 +75,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } elseif ($module === 'articles') {
             $id = (int)($_POST['id'] ?? 0);
+            $existing = $id > 0 ? $articleModel->findById($id) : null;
+            $thumbnailPath = $existing['thumbnail'] ?? null;
+
+            if (!empty($_FILES['thumbnail'])) {
+                $uploadResult = Upload::image($_FILES['thumbnail'], 'articles');
+                if ($uploadResult['status'] === 'error') {
+                    $_SESSION['flash'] = $uploadResult['message'];
+                    header("Location: /index.php?page=admin&module={$module}");
+                    exit;
+                }
+                if ($uploadResult['status'] === 'success') {
+                    $thumbnailPath = $uploadResult['path'];
+                }
+            }
+
             $data = [
                 'title' => trim($_POST['title'] ?? ''),
                 'content' => trim($_POST['content'] ?? ''),
                 'category' => trim($_POST['category'] ?? 'news'),
                 'status' => $_POST['status'] ?? 'draft',
                 'author_id' => $user['id'],
+                'thumbnail' => $thumbnailPath,
             ];
             if ($id > 0) {
                 $articleModel->update($id, $data);

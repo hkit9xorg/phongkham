@@ -338,13 +338,17 @@ if (empty($teamMembers)) {
         <div class="slider-track flex gap-4 overflow-hidden" data-track>
             <?php foreach ($articles as $index => $article): ?>
                 <div class="card bg-base-100 shadow article-card min-w-[280px] md:min-w-[320px]" data-slide <?= $index === 0 ? 'data-active' : '' ?> data-group="article-slider">
+                    <?php if (!empty($article['thumbnail'])): ?>
+                        <img src="<?= htmlspecialchars($article['thumbnail']) ?>" alt="<?= htmlspecialchars($article['title']) ?>" class="h-40 w-full object-cover">
+                    <?php endif; ?>
                     <div class="card-body space-y-3">
                         <div class="flex items-center gap-2 text-sm text-base-content/60">
                             <i class="ri-user-line"></i>
                             <span><?= htmlspecialchars($article['author_name'] ?? 'Ẩn danh') ?></span>
                         </div>
                         <h3 class="card-title text-lg"><?= htmlspecialchars($article['title']) ?></h3>
-                        <p class="text-base-content/70 line-clamp-3"><?= nl2br(htmlspecialchars(mb_substr($article['content'], 0, 160))) ?>...</p>
+                        <?php $excerpt = strip_tags($article['content']); ?>
+                        <p class="text-base-content/70 line-clamp-3"><?= nl2br(htmlspecialchars(mb_substr($excerpt, 0, 160))) ?>...</p>
                         <a href="#" class="link">Đọc tiếp</a>
                     </div>
                 </div>
