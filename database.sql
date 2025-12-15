@@ -30,6 +30,7 @@ CREATE TABLE services (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NULL,
+    thumbnail VARCHAR(255) NULL,
     price DECIMAL(12,2) NULL,
     is_active TINYINT NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

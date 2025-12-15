@@ -60,10 +60,11 @@ class Service
 
     public function create(array $data): int
     {
-        $stmt = $this->pdo->prepare('INSERT INTO services (name, description, price, is_active, created_at, updated_at) VALUES (:name, :description, :price, :is_active, NOW(), NOW())');
+        $stmt = $this->pdo->prepare('INSERT INTO services (name, description, thumbnail, price, is_active, created_at, updated_at) VALUES (:name, :description, :thumbnail, :price, :is_active, NOW(), NOW())');
         $stmt->execute([
             ':name' => $data['name'],
             ':description' => $data['description'] ?? null,
+            ':thumbnail' => $data['thumbnail'] ?? null,
             ':price' => $data['price'] ?? null,
             ':is_active' => $data['is_active'] ?? 1,
         ]);
@@ -72,11 +73,12 @@ class Service
 
     public function update(int $id, array $data): bool
     {
-        $stmt = $this->pdo->prepare('UPDATE services SET name = :name, description = :description, price = :price, is_active = :is_active, updated_at = NOW() WHERE id = :id');
+        $stmt = $this->pdo->prepare('UPDATE services SET name = :name, description = :description, thumbnail = :thumbnail, price = :price, is_active = :is_active, updated_at = NOW() WHERE id = :id');
         return $stmt->execute([
             ':id' => $id,
             ':name' => $data['name'],
             ':description' => $data['description'] ?? null,
+            ':thumbnail' => $data['thumbnail'] ?? null,
             ':price' => $data['price'] ?? null,
             ':is_active' => $data['is_active'] ?? 1,
         ]);

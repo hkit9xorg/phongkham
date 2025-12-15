@@ -203,6 +203,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    document.querySelectorAll('[data-file-input]').forEach((input) => {
+        const targetSelector = input.dataset.previewTarget;
+        const previewEl = targetSelector ? document.querySelector(targetSelector) : null;
+        if (!previewEl) return;
+
+        input.addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            if (file) {
+                previewEl.src = URL.createObjectURL(file);
+                previewEl.classList.remove('hidden');
+            } else {
+                previewEl.src = '';
+                previewEl.classList.add('hidden');
+            }
+        });
+    });
+
     document.querySelectorAll('.appointment-update-form').forEach((form) => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
