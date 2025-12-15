@@ -208,6 +208,12 @@
                     <textarea name="description" class="textarea textarea-bordered" rows="3"><?= htmlspecialchars($currentRecord['description'] ?? '') ?></textarea>
                 </label>
                 <label class="form-control">
+                    <span class="label-text">Ảnh đại diện</span>
+                    <input type="file" name="thumbnail" accept="image/*" class="file-input file-input-bordered" data-file-input data-preview-target="#service-thumb-preview">
+                    <p class="text-xs text-base-content/60">Hỗ trợ PNG, JPG, GIF, WebP (tối đa 2MB)</p>
+                    <img id="service-thumb-preview" class="mt-2 rounded-lg h-28 w-full object-cover <?= empty($currentRecord['thumbnail']) ? 'hidden' : '' ?>" src="<?= htmlspecialchars($currentRecord['thumbnail'] ?? '') ?>" alt="Xem trước ảnh dịch vụ">
+                </label>
+                <label class="form-control">
                     <span class="label-text">Trạng thái hiển thị</span>
                     <select name="is_active" class="select select-bordered">
                         <option value="1" <?= ($currentRecord['is_active'] ?? 1) == 1 ? 'selected' : '' ?>>Hiển thị</option>
@@ -222,6 +228,12 @@
                 <label class="form-control">
                     <span class="label-text">Chuyên mục</span>
                     <input name="category" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['category'] ?? 'news') ?>">
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Ảnh thumbnail</span>
+                    <input type="file" name="thumbnail" accept="image/*" class="file-input file-input-bordered" data-file-input data-preview-target="#article-thumb-preview">
+                    <p class="text-xs text-base-content/60">PNG, JPG, GIF, WebP (tối đa 2MB)</p>
+                    <img id="article-thumb-preview" class="mt-2 rounded-lg h-28 w-full object-cover <?= empty($currentRecord['thumbnail']) ? 'hidden' : '' ?>" src="<?= htmlspecialchars($currentRecord['thumbnail'] ?? '') ?>" alt="Xem trước thumbnail">
                 </label>
                 <div class="form-control" data-wysiwyg>
                     <label class="label flex items-center justify-between">
@@ -258,6 +270,12 @@
                 <label class="form-control">
                     <span class="label-text">Chuyên ngành</span>
                     <input name="specialty" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['specialty'] ?? '') ?>">
+                </label>
+                <label class="form-control">
+                    <span class="label-text">Ảnh chân dung (tải từ máy)</span>
+                    <input type="file" name="avatar_file" accept="image/*" class="file-input file-input-bordered" data-file-input data-preview-target="#doctor-avatar-preview">
+                    <p class="text-xs text-base-content/60">PNG, JPG, GIF, WebP (tối đa 2MB)</p>
+                    <img id="doctor-avatar-preview" class="mt-2 rounded-full h-24 w-24 object-cover <?= empty($currentRecord['avatar_url']) ? 'hidden' : '' ?>" src="<?= htmlspecialchars($currentRecord['avatar_url'] ?? '') ?>" alt="Xem trước ảnh bác sĩ">
                 </label>
                 <label class="form-control">
                     <span class="label-text">Link ảnh chân dung</span>

@@ -60,10 +60,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         if ($module === 'services') {
             $id = (int)($_POST['id'] ?? 0);
+            $existing = $id > 0 ? $serviceModel->findById($id) : null;
+            $thumbnailPath = $existing['thumbnail'] ?? null;
+
+            if (!empty($_FILES['thumbnail'])) {
+                $uploadResult = Upload::image($_FILES['thumbnail'], 'services');
+                if ($uploadResult['status'] === 'error') {
+                    $_SESSION['flash'] = $uploadResult['message'];
+                    header("Location: /index.php?page=admin&module={$module}");
+                    exit;
+                }
+                if ($uploadResult['status'] === 'success') {
+                    $thumbnailPath = $uploadResult['path'];
+                }
+            }
+
             $data = [
                 'name' => trim($_POST['name'] ?? ''),
                 'price' => $_POST['price'] !== '' ? $_POST['price'] : null,
                 'description' => trim($_POST['description'] ?? ''),
+                'thumbnail' => $thumbnailPath,
                 'is_active' => (int)($_POST['is_active'] ?? 1),
             ];
             if ($id > 0) {
@@ -107,11 +123,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } elseif ($module === 'doctors') {
             $id = (int)($_POST['id'] ?? 0);
+            $existing = $id > 0 ? $doctorModel->findById($id) : null;
+            $avatarPath = $existing['avatar_url'] ?? '';
+
+            if (!empty($_FILES['avatar_file'])) {
+                $uploadResult = Upload::image($_FILES['avatar_file'], 'doctors');
+                if ($uploadResult['status'] === 'error') {
+                    $_SESSION['flash'] = $uploadResult['message'];
+                    header("Location: /index.php?page=admin&module={$module}");
+                    exit;
+                }
+                if ($uploadResult['status'] === 'success') {
+                    $avatarPath = $uploadResult['path'];
+                }
+            }
+
             $data = [
                 'full_name' => trim($_POST['full_name'] ?? ''),
                 'academic_title' => trim($_POST['academic_title'] ?? ''),
                 'specialty' => trim($_POST['specialty'] ?? ''),
-                'avatar_url' => trim($_POST['avatar_url'] ?? ''),
+                'avatar_url' => trim($_POST['avatar_url'] ?? '') ?: $avatarPath,
                 'philosophy' => trim($_POST['philosophy'] ?? ''),
                 'joined_at' => $_POST['joined_at'] ?? null,
                 'is_active' => (int)($_POST['is_active'] ?? 1),
