@@ -62,7 +62,6 @@ $isHomePage = $isHomePage ?? false;
                 </nav>
             </div>
             <div class="flex items-center gap-2">
-                <a class="btn btn-outline btn-primary btn-sm" href="tel:19001234"><i class="ri-phone-fill mr-1"></i>Gọi ngay</a>
                 <a class="btn btn-primary btn-sm" href="<?= $baseUrl ?>/index.php#booking"><i class="ri-calendar-check-line mr-1"></i>Đặt lịch</a>
                 <?php if ($user): ?>
                     <?php if (($user['role'] ?? '') === 'admin'): ?>

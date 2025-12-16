@@ -91,25 +91,6 @@ if (empty($teamMembers)) {
             </div>
         </div>
     </div>
-    <!-- <div class="space-y-6">
-        <div class="badge badge-outline">Nha khoa số hóa • Chăm sóc tận tâm</div>
-        <h1 class="text-4xl md:text-5xl font-bold leading-tight">Chăm sóc răng miệng toàn diện cho cả gia đình</h1>
-        <p class="text-lg text-base-content/70">Đặt lịch nhanh, lưu trữ hồ sơ và nhận nhắc lịch tái khám tự động. SmileCare Clinic luôn sẵn sàng đồng hành cùng bạn trên hành trình xây dựng nụ cười khỏe đẹp.</p>
-        <div class="flex flex-wrap gap-3">
-            <a href="#booking" class="btn btn-primary btn-lg"><i class="ri-calendar-check-line mr-2"></i>Đặt lịch ngay</a>
-            <a href="#services" class="btn btn-ghost btn-lg"><i class="ri-hand-heart-line mr-2"></i>Xem dịch vụ</a>
-        </div>
-        <div class="grid grid-cols-2 gap-4 text-sm">
-            <div class="p-4 rounded-2xl bg-base-100 shadow">
-                <div class="flex items-center gap-2 text-primary"><i class="ri-shield-star-fill"></i><span>Giấy phép hành nghề</span></div>
-                <p class="text-base-content/70">Quy trình chuẩn Y tế, bảo mật thông tin khách hàng.</p>
-            </div>
-            <div class="p-4 rounded-2xl bg-base-100 shadow">
-                <div class="flex items-center gap-2 text-primary"><i class="ri-smartphone-line"></i><span>Theo dõi online</span></div>
-                <p class="text-base-content/70">Nhận thông báo nhắc lịch, kết quả và dặn dò trên ứng dụng.</p>
-            </div>
-        </div>
-    </div> -->
 </section>
 
 <section class="grid md:grid-cols-4 gap-4" id="pricing">
