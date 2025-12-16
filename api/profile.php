@@ -58,10 +58,14 @@ if ($action === 'update_profile') {
         Response::json('error', 'Họ tên là bắt buộc');
     }
 
-    $userModel->updateProfile($user['id'], [
-        'full_name' => $fullName,
-        'phone' => trim($payload['phone'] ?? ''),
-    ]);
+    try {
+        $userModel->updateProfile($user['id'], [
+            'full_name' => $fullName,
+            'phone' => trim($payload['phone'] ?? ''),
+        ]);
+    } catch (Exception $e) {
+        Response::json('error', $e->getMessage());
+    }
 
     $patient = $patientModel->findByUserId($user['id']);
     $patientData = [

@@ -55,6 +55,17 @@ class User
 
     public function updateProfile(int $id, array $data): bool
     {
+        if (!empty($data['phone'])) {
+            $stmt = $this->pdo->prepare('SELECT id FROM users WHERE phone = :phone AND id != :id LIMIT 1');
+            $stmt->execute([
+                ':phone' => $data['phone'],
+                ':id' => $id,
+            ]);
+            if ($stmt->fetch()) {
+                throw new \Exception('Số điện thoại đã được sử dụng cho tài khoản khác.');
+            }
+        }
+
         $stmt = $this->pdo->prepare('UPDATE users SET full_name = :full_name, phone = :phone, updated_at = NOW() WHERE id = :id');
         return $stmt->execute([
             ':id' => $id,

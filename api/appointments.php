@@ -33,12 +33,16 @@ $appointmentModel = new Appointment($pdo);
 $userModel = new User($pdo);
 
 $customerId = null;
+$existingUser = $userModel->findByPhone($phone);
+
 if (!empty($_SESSION['user'])) {
     $customerId = $_SESSION['user']['id'];
+} elseif ($existingUser) {
+    $customerId = $existingUser['id'];
 } elseif ($email) {
-    $existing = $userModel->findByEmail($email);
-    if ($existing) {
-        $customerId = $existing['id'];
+    $existingByEmail = $userModel->findByEmail($email);
+    if ($existingByEmail) {
+        $customerId = $existingByEmail['id'];
     }
 }
 
@@ -55,4 +59,9 @@ $appointmentModel->create([
     'notes' => $notes,
 ]);
 
-Response::json('success', 'Đã nhận yêu cầu đặt lịch. Chúng tôi sẽ xác nhận sớm nhất.');
+$responseData = [
+    'suggest_register' => !$existingUser && empty($_SESSION['user']),
+    'register_url' => '/index.php?page=register',
+];
+
+Response::json('success', 'Đã nhận yêu cầu đặt lịch. Chúng tôi sẽ xác nhận sớm nhất.', $responseData);
