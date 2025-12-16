@@ -30,7 +30,7 @@ class Appointment
 
     public function listForUser(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT a.*, s.name AS service_name, d.full_name AS doctor_name FROM appointments a LEFT JOIN services s ON a.service_id = s.id LEFT JOIN users d ON a.doctor_id = d.id WHERE a.customer_id = :customer_id ORDER BY a.appointment_date DESC");
+        $stmt = $this->pdo->prepare("SELECT a.*, s.name AS service_name, d.full_name AS doctor_name FROM appointments a LEFT JOIN services s ON a.service_id = s.id LEFT JOIN doctors d ON a.doctor_id = d.id WHERE a.customer_id = :customer_id ORDER BY a.appointment_date DESC");
         $stmt->execute([':customer_id' => $userId]);
         return $stmt->fetchAll();
     }
@@ -47,7 +47,7 @@ class Appointment
         $sql = "SELECT a.*, s.name AS service_name, c.full_name AS customer_name, d.full_name AS doctor_name FROM appointments a
                 LEFT JOIN services s ON a.service_id = s.id
                 LEFT JOIN users c ON a.customer_id = c.id
-                LEFT JOIN users d ON a.doctor_id = d.id
+                LEFT JOIN doctors d ON a.doctor_id = d.id
                 ORDER BY a.appointment_date DESC";
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll();
@@ -58,7 +58,7 @@ class Appointment
         $stmt = $this->pdo->prepare("SELECT a.*, s.name AS service_name, c.full_name AS customer_name, d.full_name AS doctor_name FROM appointments a
                 LEFT JOIN services s ON a.service_id = s.id
                 LEFT JOIN users c ON a.customer_id = c.id
-                LEFT JOIN users d ON a.doctor_id = d.id
+                LEFT JOIN doctors d ON a.doctor_id = d.id
                 WHERE a.id = :id LIMIT 1");
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch();
@@ -98,7 +98,7 @@ class Appointment
         $sql = "SELECT a.*, s.name AS service_name, c.full_name AS customer_name, d.full_name AS doctor_name FROM appointments a
                 LEFT JOIN services s ON a.service_id = s.id
                 LEFT JOIN users c ON a.customer_id = c.id
-                LEFT JOIN users d ON a.doctor_id = d.id
+                LEFT JOIN doctors d ON a.doctor_id = d.id
                 WHERE {$whereSql}
                 ORDER BY a.appointment_date DESC
                 LIMIT :limit OFFSET :offset";

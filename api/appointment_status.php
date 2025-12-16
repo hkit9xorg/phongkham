@@ -5,6 +5,7 @@ require_once __DIR__ . '/../helpers/Csrf.php';
 require_once __DIR__ . '/../helpers/Response.php';
 require_once __DIR__ . '/../helpers/Auth.php';
 require_once __DIR__ . '/../models/Appointment.php';
+require_once __DIR__ . '/../models/Doctor.php';
 
 $user = Auth::user();
 if (!$user) {
@@ -28,13 +29,10 @@ if ($id <= 0) {
 }
 
 $appointmentModel = new Appointment($pdo);
+$doctorModel = new Doctor($pdo);
 $appointment = $appointmentModel->findById($id);
 if (!$appointment) {
     Response::json('error', 'Không tìm thấy lịch hẹn.');
-}
-
-if ($user['role'] === 'doctor' && $appointment['doctor_id'] && (int)$appointment['doctor_id'] !== (int)$user['id']) {
-    Response::json('error', 'Bạn không thể cập nhật lịch hẹn của bác sĩ khác.');
 }
 
 $status = $payload['status'] ?? $appointment['status'];
@@ -43,7 +41,14 @@ $appointmentDate = $payload['appointment_date'] ?? $appointment['appointment_dat
 $doctorId = $payload['doctor_id'] ?? $appointment['doctor_id'];
 
 if ($user['role'] === 'doctor') {
-    $doctorId = $user['id'];
+    $doctorProfile = $doctorModel->findByUserId($user['id']);
+    if (!$doctorProfile) {
+        Response::json('error', 'Tài khoản bác sĩ chưa được liên kết hồ sơ.');
+    }
+    if ($appointment['doctor_id'] && (int)$appointment['doctor_id'] !== (int)$doctorProfile['id']) {
+        Response::json('error', 'Bạn không thể cập nhật lịch hẹn của bác sĩ khác.');
+    }
+    $doctorId = $doctorProfile['id'];
 }
 
 $appointmentModel->updateStatus($id, [
