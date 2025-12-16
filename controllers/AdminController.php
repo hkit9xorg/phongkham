@@ -139,6 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $data = [
+                'user_id' => $_POST['user_id'] !== '' ? (int)$_POST['user_id'] : null,
                 'full_name' => trim($_POST['full_name'] ?? ''),
                 'academic_title' => trim($_POST['academic_title'] ?? ''),
                 'specialty' => trim($_POST['specialty'] ?? ''),
@@ -223,6 +224,7 @@ if ($module === 'services') {
 
 $totalPages = max(1, (int)ceil($total / $perPage));
 $doctorUsers = $userModel->listDoctors();
+$doctorProfiles = $doctorModel->allActive();
 
 $title = 'Quản trị chi tiết';
 ob_start();

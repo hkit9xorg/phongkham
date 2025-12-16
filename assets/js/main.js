@@ -271,18 +271,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!slides.length) return;
 
             const track = slider.querySelector('[data-track]');
+            const perPage = Math.max(1, parseInt(slider.dataset.visible || '1', 10));
             let activeIndex = Array.from(slides).findIndex((slide) => slide.hasAttribute('data-active'));
             activeIndex = activeIndex >= 0 ? activeIndex : 0;
+            activeIndex = Math.floor(activeIndex / perPage) * perPage;
             const interval = parseInt(slider.dataset.interval || '4000', 10);
 
             const setActive = (index) => {
-                activeIndex = (index + slides.length) % slides.length;
+                const totalGroups = Math.max(1, Math.ceil(slides.length / perPage));
+                const groupIndex = ((Math.floor(index / perPage) % totalGroups) + totalGroups) % totalGroups;
+                activeIndex = groupIndex * perPage;
                 slides.forEach((slide, idx) => {
-                    if (idx === activeIndex) {
-                        slide.setAttribute('data-active', '');
-                    } else {
-                        slide.removeAttribute('data-active');
-                    }
+                    const isActiveGroup = idx >= activeIndex && idx < activeIndex + perPage;
+                    if (isActiveGroup) slide.setAttribute('data-active', '');
+                    else slide.removeAttribute('data-active');
                 });
 
                 if (track) {
@@ -292,8 +294,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            const next = () => setActive(activeIndex + 1);
-            const prev = () => setActive(activeIndex - 1);
+            const next = () => setActive(activeIndex + perPage);
+            const prev = () => setActive(activeIndex - perPage);
 
             slider.querySelectorAll('[data-next]').forEach((btn) => btn.addEventListener('click', next));
             slider.querySelectorAll('[data-prev]').forEach((btn) => btn.addEventListener('click', prev));

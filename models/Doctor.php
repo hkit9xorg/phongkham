@@ -11,10 +11,11 @@ class Doctor
 
     public function create(array $data): int
     {
-        $sql = 'INSERT INTO doctors (full_name, academic_title, specialty, avatar_url, philosophy, joined_at, is_active, created_at, updated_at)
-                VALUES (:full_name, :academic_title, :specialty, :avatar_url, :philosophy, :joined_at, :is_active, NOW(), NOW())';
+        $sql = 'INSERT INTO doctors (user_id, full_name, academic_title, specialty, avatar_url, philosophy, joined_at, is_active, created_at, updated_at)
+                VALUES (:user_id, :full_name, :academic_title, :specialty, :avatar_url, :philosophy, :joined_at, :is_active, NOW(), NOW())';
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
+            ':user_id' => $data['user_id'] ?? null,
             ':full_name' => $data['full_name'],
             ':academic_title' => $data['academic_title'] ?? null,
             ':specialty' => $data['specialty'] ?? null,
@@ -30,7 +31,8 @@ class Doctor
     public function update(int $id, array $data): bool
     {
         $sql = 'UPDATE doctors
-                SET full_name = :full_name,
+                SET user_id = :user_id,
+                    full_name = :full_name,
                     academic_title = :academic_title,
                     specialty = :specialty,
                     avatar_url = :avatar_url,
@@ -43,6 +45,7 @@ class Doctor
 
         return $stmt->execute([
             ':id' => $id,
+            ':user_id' => $data['user_id'] ?? null,
             ':full_name' => $data['full_name'],
             ':academic_title' => $data['academic_title'] ?? null,
             ':specialty' => $data['specialty'] ?? null,
@@ -63,6 +66,15 @@ class Doctor
     {
         $stmt = $this->pdo->prepare('SELECT * FROM doctors WHERE id = :id LIMIT 1');
         $stmt->execute([':id' => $id]);
+        $doctor = $stmt->fetch();
+
+        return $doctor ?: null;
+    }
+
+    public function findByUserId(int $userId): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM doctors WHERE user_id = :user_id LIMIT 1');
+        $stmt->execute([':user_id' => $userId]);
         $doctor = $stmt->fetch();
 
         return $doctor ?: null;
@@ -98,7 +110,11 @@ class Doctor
 
     public function allActive(int $limit = 0): array
     {
-        $sql = 'SELECT * FROM doctors WHERE is_active = 1 ORDER BY joined_at DESC, created_at DESC';
+        $sql = 'SELECT d.*, u.email, u.phone
+                FROM doctors d
+                LEFT JOIN users u ON d.user_id = u.id
+                WHERE d.is_active = 1 AND (u.is_active = 1 OR d.user_id IS NULL)
+                ORDER BY d.joined_at DESC, d.created_at DESC';
         if ($limit > 0) {
             $sql .= ' LIMIT ' . (int)$limit;
         }
@@ -108,7 +124,7 @@ class Doctor
 
     public function countActive(): int
     {
-        $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM doctors WHERE is_active = 1');
+        $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM doctors d LEFT JOIN users u ON d.user_id = u.id WHERE d.is_active = 1 AND (u.is_active = 1 OR d.user_id IS NULL)');
         $row = $stmt->fetch();
         return (int)($row['total'] ?? 0);
     }

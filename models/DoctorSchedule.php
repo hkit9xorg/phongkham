@@ -31,7 +31,7 @@ class DoctorSchedule
 
     public function findByDate(string $date, ?int $doctorId = null): array
     {
-        $sql = 'SELECT ds.*, u.full_name AS doctor_name FROM doctor_schedules ds JOIN users u ON ds.doctor_id = u.id WHERE ds.work_date = :date';
+        $sql = 'SELECT ds.*, d.full_name AS doctor_name FROM doctor_schedules ds JOIN doctors d ON ds.doctor_id = d.id WHERE ds.work_date = :date';
         $params = [':date' => $date];
 
         if ($doctorId) {
@@ -48,7 +48,7 @@ class DoctorSchedule
 
     public function findNextSchedule(string $fromDate): ?array
     {
-        $stmt = $this->pdo->prepare('SELECT ds.*, u.full_name AS doctor_name FROM doctor_schedules ds JOIN users u ON ds.doctor_id = u.id WHERE ds.work_date >= :date ORDER BY ds.work_date ASC, ds.start_time ASC LIMIT 1');
+        $stmt = $this->pdo->prepare('SELECT ds.*, d.full_name AS doctor_name FROM doctor_schedules ds JOIN doctors d ON ds.doctor_id = d.id WHERE ds.work_date >= :date ORDER BY ds.work_date ASC, ds.start_time ASC LIMIT 1');
         $stmt->execute([':date' => $fromDate]);
         $row = $stmt->fetch();
         return $row ?: null;

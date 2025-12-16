@@ -164,7 +164,7 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                             <td>
                                 <form class="appointment-update-form space-y-1" data-id="<?= $app['id'] ?>">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
-                                    <input type="hidden" name="doctor_id" value="<?= (int)$user['id'] ?>">
+                                    <input type="hidden" name="doctor_id" value="<?= isset($doctorProfile['id']) ? (int)$doctorProfile['id'] : '' ?>">
                                     <select name="status" class="select select-bordered select-sm w-full">
                                         <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
                                             <option value="<?= $st ?>" <?= ($app['status'] ?? '') === $st ? 'selected' : '' ?>><?= $st ?></option>

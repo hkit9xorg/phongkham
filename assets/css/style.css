@@ -26,12 +26,30 @@ body {
     100% { transform: translateX(-50%); }
 }
 
-.auto-slider [data-slide] {
+.auto-slider:not([data-visible]) [data-slide] {
     display: none;
 }
 
-.auto-slider [data-slide][data-active] {
+.auto-slider:not([data-visible]) [data-slide][data-active] {
     display: block;
+}
+
+.auto-slider[data-visible] [data-slide] {
+    display: block;
+    min-width: 0;
+    flex: 0 0 calc((100% - 3rem) / 4);
+}
+
+@media (max-width: 1024px) {
+    .auto-slider[data-visible] [data-slide] {
+        flex-basis: calc((100% - 1rem) / 2);
+    }
+}
+
+@media (max-width: 640px) {
+    .auto-slider[data-visible] [data-slide] {
+        flex-basis: 100%;
+    }
 }
 
 .auto-slider .grid [data-slide] {
