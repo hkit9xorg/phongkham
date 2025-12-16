@@ -8,10 +8,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3200);
     });
 
-    const showModal = (title, body) => {
+    const showModal = (title, body, extraNode = null) => {
         const modal = document.getElementById('modal-message');
+        const modalBody = document.getElementById('modal-body');
         document.getElementById('modal-title').textContent = title;
-        document.getElementById('modal-body').textContent = body;
+        modalBody.innerHTML = '';
+
+        const bodyParagraph = document.createElement('p');
+        bodyParagraph.textContent = body;
+        modalBody.appendChild(bodyParagraph);
+
+        if (extraNode) {
+            modalBody.appendChild(extraNode);
+        }
+
         modal.showModal();
     };
 
@@ -82,7 +92,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
-            showModal(response.status === 'success' ? 'Thành công' : 'Lỗi', response.message);
+
+            let extraNode = null;
+            if (response.status === 'success' && response.data?.suggest_register) {
+                extraNode = document.createElement('div');
+                extraNode.className = 'mt-3 space-y-1';
+
+                const hint = document.createElement('p');
+                hint.textContent = 'Bạn chưa có tài khoản với số điện thoại này. Đăng ký để quản lý và theo dõi lịch hẹn.';
+
+                const link = document.createElement('a');
+                link.className = 'link link-primary font-semibold';
+                link.href = response.data.register_url || '/index.php?page=register';
+                link.textContent = 'Đăng ký tài khoản';
+
+                extraNode.appendChild(hint);
+                extraNode.appendChild(link);
+            }
+
+            showModal(response.status === 'success' ? 'Thành công' : 'Lỗi', response.message, extraNode);
             if (response.status === 'success') {
                 bookingForm.reset();
             }
