@@ -268,6 +268,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    const appointmentModal = document.getElementById('appointment-edit-modal');
+    if (appointmentModal) {
+        const idInput = appointmentModal.querySelector('[data-appointment-id]');
+        const dateInput = appointmentModal.querySelector('[data-appointment-date]');
+        const statusSelect = appointmentModal.querySelector('[data-appointment-status]');
+        const doctorSelect = appointmentModal.querySelector('[data-appointment-doctor]');
+        const notesTextarea = appointmentModal.querySelector('[data-appointment-notes]');
+        const nameEl = appointmentModal.querySelector('[data-appointment-name]');
+        const phoneEl = appointmentModal.querySelector('[data-appointment-phone]');
+        const serviceEl = appointmentModal.querySelector('[data-appointment-service]');
+        const datetimeEl = appointmentModal.querySelector('[data-appointment-datetime]');
+        const closeBtn = appointmentModal.querySelector('[data-appointment-close]');
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => appointmentModal.close());
+        }
+
+        document.querySelectorAll('[data-appointment-trigger]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                idInput.value = btn.dataset.id || '';
+                dateInput.value = btn.dataset.date ? btn.dataset.date.replace(' ', 'T') : '';
+                statusSelect.value = btn.dataset.status || 'pending';
+                doctorSelect.value = btn.dataset.doctorId || '';
+                notesTextarea.value = btn.dataset.notes || '';
+
+                nameEl.textContent = btn.dataset.name || 'Khách hàng';
+                phoneEl.textContent = btn.dataset.phone || '';
+                serviceEl.textContent = btn.dataset.service || '';
+                datetimeEl.textContent = btn.dataset.date || '';
+
+                appointmentModal.showModal();
+            });
+        });
+    }
+
     const profileForm = document.getElementById('patient-profile-form');
     if (profileForm) {
         profileForm.addEventListener('submit', async (e) => {
@@ -290,6 +325,24 @@ document.addEventListener('DOMContentLoaded', () => {
             if (res.status === 'success') {
                 passwordForm.reset();
             }
+        });
+    }
+
+    const scheduleModal = document.getElementById('schedule-view-modal');
+    if (scheduleModal) {
+        const dateEl = scheduleModal.querySelector('[data-schedule-date]');
+        const startEl = scheduleModal.querySelector('[data-schedule-start]');
+        const endEl = scheduleModal.querySelector('[data-schedule-end]');
+        const noteEl = scheduleModal.querySelector('[data-schedule-note]');
+
+        document.querySelectorAll('[data-schedule-trigger]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                dateEl.textContent = btn.dataset.date || '';
+                startEl.textContent = btn.dataset.start || '';
+                endEl.textContent = btn.dataset.end || '';
+                noteEl.textContent = btn.dataset.note || 'Không có ghi chú.';
+                scheduleModal.showModal();
+            });
         });
     }
 
