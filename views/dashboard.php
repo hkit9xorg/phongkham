@@ -192,7 +192,7 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
     <h2 class="text-2xl font-semibold mb-4"><i class="ri-time-line mr-2"></i>Lịch làm việc</h2>
     <div class="overflow-x-auto bg-base-100 p-4 rounded-box shadow">
         <table class="table" id="schedule-table">
-            <thead><tr><th>Ngày</th><th>Bắt đầu</th><th>Kết thúc</th><th>Ghi chú</th></tr></thead>
+            <thead><tr><th>Ngày</th><th>Bắt đầu</th><th>Kết thúc</th><th>Ghi chú</th><th>Thao tác</th></tr></thead>
             <tbody>
                 <?php foreach ($doctorSchedules as $schedule): ?>
                     <tr>
@@ -200,12 +200,43 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                         <td><?= htmlspecialchars($schedule['start_time']) ?></td>
                         <td><?= htmlspecialchars($schedule['end_time']) ?></td>
                         <td><?= htmlspecialchars($schedule['note']) ?></td>
+                        <td>
+                            <button type="button" class="btn btn-ghost btn-xs" data-schedule-trigger
+                                    data-date="<?= htmlspecialchars($schedule['work_date']) ?>"
+                                    data-start="<?= htmlspecialchars($schedule['start_time']) ?>"
+                                    data-end="<?= htmlspecialchars($schedule['end_time']) ?>"
+                                    data-note="<?= htmlspecialchars($schedule['note']) ?>">
+                                Xem
+                            </button>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 </section>
+<?php endif; ?>
+
+<?php if ($user['role'] === 'doctor' && $doctorSchedules): ?>
+<dialog id="schedule-view-modal" class="modal">
+    <div class="modal-box">
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <h3 class="font-bold text-lg">Chi tiết lịch làm việc</h3>
+                <p class="text-sm text-base-content/70">Xem nhanh thông tin ca trực và ghi chú.</p>
+            </div>
+            <form method="dialog">
+                <button class="btn btn-sm btn-ghost"><i class="ri-close-line text-lg"></i></button>
+            </form>
+        </div>
+        <div class="space-y-2 mt-4 text-sm">
+            <p><strong>Ngày:</strong> <span data-schedule-date></span></p>
+            <p><strong>Khung giờ:</strong> <span data-schedule-start></span> - <span data-schedule-end></span></p>
+            <p><strong>Ghi chú:</strong></p>
+            <div class="bg-base-200 rounded-box p-3" data-schedule-note></div>
+        </div>
+    </div>
+</dialog>
 <?php endif; ?>
 
 <?php if ($user['role'] === 'customer'): ?>

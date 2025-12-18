@@ -165,7 +165,17 @@
                                 <td><?= htmlspecialchars($item['status']) ?></td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">
-                                        <a class="link" href="/index.php?page=admin&module=appointments&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
+                                        <button type="button" class="link" data-appointment-trigger
+                                                data-id="<?= (int)$item['id'] ?>"
+                                                data-name="<?= htmlspecialchars($item['full_name']) ?>"
+                                                data-phone="<?= htmlspecialchars($item['phone'] ?? '') ?>"
+                                                data-service="<?= htmlspecialchars($item['service_name'] ?? 'Tư vấn') ?>"
+                                                data-date="<?= htmlspecialchars($item['appointment_date']) ?>"
+                                                data-status="<?= htmlspecialchars($item['status']) ?>"
+                                                data-doctor-id="<?= htmlspecialchars($item['doctor_id'] ?? '') ?>"
+                                                data-notes="<?= htmlspecialchars($item['notes'] ?? '') ?>">
+                                            Chỉnh sửa
+                                        </button>
                                         <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa lịch hẹn này?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
@@ -361,3 +371,59 @@
         </form>
     </div>
 </section>
+
+<?php if ($module === 'appointments'): ?>
+<dialog id="appointment-edit-modal" class="modal">
+    <div class="modal-box w-11/12 max-w-2xl">
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <h3 class="font-bold text-lg">Cập nhật lịch hẹn</h3>
+                <p class="text-sm text-base-content/70">Chỉnh sửa nhanh thông tin lịch hẹn và lưu thay đổi.</p>
+            </div>
+            <form method="dialog">
+                <button class="btn btn-sm btn-ghost"><i class="ri-close-line text-lg"></i></button>
+            </form>
+        </div>
+
+        <div class="bg-base-200 rounded-box p-3 mt-4 space-y-1 text-sm">
+            <div><strong>Khách hàng:</strong> <span data-appointment-name></span> • <span data-appointment-phone></span></div>
+            <div><strong>Dịch vụ:</strong> <span data-appointment-service></span></div>
+            <div><strong>Thời gian:</strong> <span data-appointment-datetime></span></div>
+        </div>
+
+        <form method="post" class="space-y-3 mt-4">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+            <input type="hidden" name="id" data-appointment-id>
+            <label class="form-control">
+                <span class="label-text">Thời gian hẹn</span>
+                <input type="datetime-local" name="appointment_date" class="input input-bordered" data-appointment-date>
+            </label>
+            <label class="form-control">
+                <span class="label-text">Trạng thái</span>
+                <select name="status" class="select select-bordered" data-appointment-status>
+                    <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
+                        <option value="<?= $st ?>"><?= $st ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="form-control">
+                <span class="label-text">Bác sĩ phụ trách</span>
+                <select name="doctor_id" class="select select-bordered" data-appointment-doctor>
+                    <option value="">Chưa gán</option>
+                    <?php foreach ($doctorProfiles as $doc): ?>
+                        <option value="<?= $doc['id'] ?>"><?= htmlspecialchars($doc['full_name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="form-control">
+                <span class="label-text">Ghi chú</span>
+                <textarea name="notes" class="textarea textarea-bordered" rows="3" data-appointment-notes></textarea>
+            </label>
+            <div class="modal-action">
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                <button type="button" class="btn" data-appointment-close>Đóng</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+<?php endif; ?>
