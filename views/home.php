@@ -93,11 +93,11 @@ if (empty($teamMembers)) {
     </div>
 </section>
 
-<section class="grid md:grid-cols-4 gap-4" id="pricing">
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4" id="pricing">
     <?php foreach ($quickLinks as $link): ?>
         <a href="<?= $link['href'] ?>" class="group p-4 rounded-2xl bg-base-100 shadow hover:-translate-y-1 transition">
             <div class="flex items-center gap-3">
-                <div class="h-12 w-12 rounded-xl bg-primary/10 text-primary grid place-items-center text-2xl group-hover:bg-primary group-hover:text-white transition">
+                <div class="h-12 w-12 rounded-xl bg-primary/10 text-primary grid place-items-center text-2xl group-hover:bg-primary transition">
                     <i class="<?= $link['icon'] ?>"></i>
                 </div>
                 <div>
@@ -264,7 +264,7 @@ if (empty($teamMembers)) {
             <!-- item -->
             <div class="stat bg-white/10 backdrop-blur-md rounded-xl shadow-lg hover:scale-105 transition">
                 <div class="stat-figure">
-                    <i class="ri-user-smile-line text-4xl"></i>
+                    <i class="ri-user-smile-line text-2xl sm:text-4xl"></i>
                 </div>
                 <div class="stat-title text-gray-200">Kinh nghiệm</div>
                 <div class="stat-value text-white">10+</div>
@@ -272,7 +272,7 @@ if (empty($teamMembers)) {
 
             <div class="stat bg-white/10 backdrop-blur-md rounded-xl shadow-lg hover:scale-105 transition">
                 <div class="stat-figure">
-                    <i class="ri-group-line text-4xl"></i>
+                    <i class="ri-group-line text-2xl sm:text-4xl"></i>
                 </div>
                 <div class="stat-title text-gray-200">Khách hàng</div>
                 <div class="stat-value"><?= number_format($stats['customers']) ?>+</div>
@@ -280,7 +280,7 @@ if (empty($teamMembers)) {
 
             <div class="stat bg-white/10 backdrop-blur-md rounded-xl shadow-lg hover:scale-105 transition">
                 <div class="stat-figure">
-                    <i class="ri-shield-star-line text-4xl"></i>
+                    <i class="ri-shield-star-line text-2xl sm:text-4xl"></i>
                 </div>
                 <div class="stat-title text-gray-200">Dịch vụ</div>
                 <div class="stat-value"><?= number_format($stats['services']) ?>+</div>
@@ -288,7 +288,7 @@ if (empty($teamMembers)) {
 
             <div class="stat bg-white/10 backdrop-blur-md rounded-xl shadow-lg hover:scale-105 transition">
                 <div class="stat-figure">
-                    <i class="ri-user-voice-line text-4xl"></i>
+                    <i class="ri-user-voice-line text-2xl sm:text-4xl"></i>
                 </div>
                 <div class="stat-title text-gray-200">Bác sĩ</div>
                 <div class="stat-value"><?= number_format($stats['doctors']) ?>+</div>
@@ -296,9 +296,9 @@ if (empty($teamMembers)) {
 
             <div class="stat bg-white/10 backdrop-blur-md rounded-xl shadow-lg hover:scale-105 transition">
                 <div class="stat-figure">
-                    <i class="ri-calendar-check-line text-4xl"></i>
+                    <i class="ri-calendar-check-line text-2xl sm:text-4xl"></i>
                 </div>
-                <div class="stat-title">Ca điều trị</div>
+                <div class="stat-title text-gray-200">Ca điều trị</div>
                 <div class="stat-value"><?= number_format($stats['appointments']) ?>+</div>
             </div>
         </div>

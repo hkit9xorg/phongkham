@@ -19,6 +19,7 @@ $isHomePage = $isHomePage ?? false;
     <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
 </head>
 <body class="bg-base-200 min-h-screen">
     <div class="bg-primary text-primary-content text-sm">
@@ -40,49 +41,76 @@ $isHomePage = $isHomePage ?? false;
             </div>
         </div>
     </div>
-
+    
     <header class="sticky top-0 z-30 backdrop-blur bg-base-100/90 shadow">
-        <div class="container mx-auto flex items-center justify-between gap-4 px-4 py-3">
-            <div class="flex items-center gap-3">
-                <a href="<?= $baseUrl ?>/index.php" class="flex items-center gap-2 text-xl font-semibold">
-                    <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-accent text-white grid place-items-center shadow-lg">
-                        <i class="ri-shield-cross-line text-2xl"></i>
+        <div class="container mx-auto flex items-center justify-between px-4 py-2">
+    
+            <!-- LEFT -->
+            <div class="flex items-center gap-2">
+                <!-- MOBILE MENU -->
+                <div class="dropdown lg:hidden">
+                    <label tabindex="0" class="btn btn-ghost btn-circle">
+                        <i class="ri-menu-line text-2xl"></i>
+                    </label>
+                    <ul tabindex="0" class="menu dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                        <li><a href="<?= $baseUrl ?>/#home">Trang chủ</a></li>
+                        <li><a href="<?= $baseUrl ?>/#services">Dịch vụ</a></li>
+                        <li><a href="<?= $baseUrl ?>/#about">Giới thiệu</a></li>
+                        <li><a href="<?= $baseUrl ?>/#team">Đội ngũ</a></li>
+                        <li><a href="<?= $baseUrl ?>/#articles">Bài viết</a></li>
+                    </ul>
+                </div>
+    
+                <!-- LOGO -->
+                <a href="<?= $baseUrl ?>/index.php" class="flex items-center gap-2 font-semibold">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent text-white grid place-items-center">
+                        <i class="ri-shield-cross-line text-xl"></i>
                     </div>
                     <div class="leading-tight">
-                        <div>SmileCare</div>
-                        <div class="text-sm text-base-content/70">Digital Dental Clinic</div>
+                        <div class="text-lg">SmileCare</div>
+                        <div class="hidden sm:block text-xs text-base-content/70">
+                            Digital Dental Clinic
+                        </div>
                     </div>
                 </a>
-                <nav class="hidden lg:flex items-center gap-2">
-                    <a href="<?= $baseUrl ?>/index.php#home" class="btn btn-ghost btn-sm">Trang chủ</a>
-                    <a href="<?= $baseUrl ?>/index.php#services" class="btn btn-ghost btn-sm">Dịch vụ</a>
-                    <a href="<?= $baseUrl ?>/index.php#about" class="btn btn-ghost btn-sm">Giới thiệu</a>
-                    <a href="<?= $baseUrl ?>/index.php#team" class="btn btn-ghost btn-sm">Đội ngũ</a>
-                    <a href="<?= $baseUrl ?>/index.php#articles" class="btn btn-ghost btn-sm">Bài viết</a>
-                </nav>
             </div>
-            <div class="flex items-center gap-2">
-                <a class="btn btn-primary btn-sm" href="<?= $baseUrl ?>/index.php#booking"><i class="ri-calendar-check-line mr-1"></i>Đặt lịch</a>
+    
+            <!-- DESKTOP MENU -->
+            <nav class="hidden lg:flex items-center gap-1">
+                <a href="#home" class="btn btn-ghost btn-sm">Trang chủ</a>
+                <a href="#services" class="btn btn-ghost btn-sm">Dịch vụ</a>
+                <a href="#about" class="btn btn-ghost btn-sm">Giới thiệu</a>
+                <a href="#team" class="btn btn-ghost btn-sm">Đội ngũ</a>
+                <a href="#articles" class="btn btn-ghost btn-sm">Bài viết</a>
+            </nav>
+    
+            <!-- RIGHT -->
+            <div class="flex items-center gap-1">
+                <a class="btn btn-primary btn-sm hidden sm:inline px-4 py-2" href="#booking">
+                    <i class="ri-calendar-check-line"></i>
+                    <span>Đặt lịch</span>
+                </a>
+    
                 <?php if ($user): ?>
-                    <?php if (($user['role'] ?? '') === 'admin'): ?>
-                        <a class="btn btn-sm" href="<?= $baseUrl ?>/index.php?page=admin"><i class="ri-settings-5-line mr-1"></i>Quản trị</a>
-                    <?php endif; ?>
-                    <a class="btn btn-sm btn-secondary" href="<?= $baseUrl ?>/index.php?page=dashboard"><i class="ri-dashboard-line mr-1"></i>Dashboard</a>
                     <div class="dropdown dropdown-end">
                         <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-                            <div class="w-10 rounded-full">
-                                <?php $avatarSeed = $user['email'] ?? $user['phone'] ?? $user['name']; ?>
-                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=<?= urlencode($avatarSeed) ?>" alt="avatar">
+                            <div class="w-9 rounded-full">
+                                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=<?= urlencode($user['email']) ?>">
                             </div>
                         </label>
-                        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                            <li class="menu-title"><?= htmlspecialchars($user['name']) ?> (<?= htmlspecialchars($user['role']) ?>)</li>
-                            <li><a href="<?= $baseUrl ?>/index.php?page=logout"><i class="ri-logout-circle-r-line"></i>Đăng xuất</a></li>
+                        <ul tabindex="0" class="menu dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-48">
+                            <li class="menu-title text-xs">
+                                <?= htmlspecialchars($user['name']) ?>
+                            </li>
+                            <li><a href="?page=dashboard">Dashboard</a></li>
+                            <?php if (($user['role'] ?? '') === 'admin'): ?>
+                                <li><a href="?page=admin">Quản trị</a></li>
+                            <?php endif; ?>
+                            <li><a href="?page=logout">Đăng xuất</a></li>
                         </ul>
                     </div>
                 <?php else: ?>
-                    <a class="btn btn-ghost btn-sm" href="<?= $baseUrl ?>/index.php?page=login"><i class="ri-login-circle-line mr-2"></i>Đăng nhập</a>
-                    <a class="btn btn-outline btn-sm" href="<?= $baseUrl ?>/index.php?page=register"><i class="ri-user-add-line mr-2"></i>Đăng ký</a>
+                    <a class="btn btn-ghost btn-sm" href="?page=login">Đăng nhập</a>
                 <?php endif; ?>
             </div>
         </div>

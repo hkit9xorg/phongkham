@@ -97,11 +97,14 @@ CREATE TABLE doctor_schedules (
     FOREIGN KEY (doctor_id) REFERENCES doctors(id)
 );
 
-INSERT INTO users (full_name, email, phone, password_hash, role, is_active)
+INSERT INTO users (id, full_name, email, phone, password_hash, role, is_active)
 VALUES
-('Quản trị viên', 'admin@example.com', '0901000100', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'admin', 1),
-('Bác sĩ Lisa', 'doctor@example.com', '0902000200', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'doctor', 1),
-('Khách hàng Minh', 'user@example.com', '0903000300', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'customer', 1);
+(1, 'Quản trị viên', 'admin@example.com', '0901000100', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'admin', 1),
+(2, 'Nguyễn Minh Châu', 'chaunm@example.com', '0902000200', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'doctor', 1),
+(3, 'Khách hàng Minh', 'minhkh@example.com', '0903000300', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'customer', 1),
+(4, 'Trần Gia Hưng', 'hungtg@example.com', '0902000201', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'doctor', 1),
+(5, 'Phạm Bảo Ngọc', 'ngocpb@example.com', '0902000202', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'doctor', 1),
+(6, 'Nguyễn Hoàng Kha', 'khanh@example.com', '0903000301', '$2y$10$XmYFYy.VNeY/L4/8SSeO0.ODMgBk0.ujvcCb4WB.XBF40sWia7zLa', 'customer', 1);
 
 INSERT INTO patients (user_id, dob, gender, address, medical_history, allergies)
 VALUES
@@ -121,13 +124,13 @@ VALUES
 INSERT INTO doctors (user_id, full_name, academic_title, specialty, avatar_url, philosophy, joined_at)
 VALUES
  (2, 'BS. Nguyễn Minh Châu', 'Thạc sĩ RHM', 'Phục hình - Cấy ghép Implant', 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80', 'Tập trung vào điều trị ít xâm lấn, giữ vững cấu trúc răng tự nhiên.', DATE_SUB(CURDATE(), INTERVAL 540 DAY)),
- (NULL, 'BS. Trần Gia Hưng', 'Bác sĩ CKI', 'Chỉnh nha & Invisalign', 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80', 'Lắng nghe, đồng hành và cá nhân hóa kế hoạch cho từng khách hàng.', DATE_SUB(CURDATE(), INTERVAL 320 DAY)),
- (NULL, 'BS. Phạm Bảo Ngọc', 'Bác sĩ', 'Điều trị tổng quát', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80', 'Ưu tiên trải nghiệm nhẹ nhàng, giúp khách hàng bớt lo lắng khi đến nha khoa.', DATE_SUB(CURDATE(), INTERVAL 180 DAY));
+ (4, 'BS. Trần Gia Hưng', 'Bác sĩ CKI', 'Chỉnh nha & Invisalign', 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80', 'Lắng nghe, đồng hành và cá nhân hóa kế hoạch cho từng khách hàng.', DATE_SUB(CURDATE(), INTERVAL 320 DAY)),
+ (5, 'BS. Phạm Bảo Ngọc', 'Bác sĩ', 'Điều trị tổng quát', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80', 'Ưu tiên trải nghiệm nhẹ nhàng, giúp khách hàng bớt lo lắng khi đến nha khoa.', DATE_SUB(CURDATE(), INTERVAL 180 DAY));
 
 INSERT INTO appointments (customer_id, doctor_id, service_id, full_name, phone, email, appointment_date, status, type, notes)
 VALUES
 (3, 1, 1, 'Khách hàng Minh', '0903000300', 'user@example.com', DATE_ADD(NOW(), INTERVAL 1 DAY), 'pending', 'standard', 'Đau nhức răng hàm trên'),
-(NULL, 1, 2, 'Khách vãng lai', '0909999999', 'guest@example.com', DATE_ADD(NOW(), INTERVAL 2 DAY), 'confirmed', 'standard', 'Muốn tẩy trắng răng');
+(6, 1, 2, 'Khách vãng lai', '0909999999', 'guest@example.com', DATE_ADD(NOW(), INTERVAL 2 DAY), 'confirmed', 'standard', 'Muốn tẩy trắng răng');
 
 INSERT INTO doctor_schedules (doctor_id, work_date, start_time, end_time, note)
 VALUES
