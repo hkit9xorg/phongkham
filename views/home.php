@@ -330,7 +330,7 @@ if (empty($teamMembers)) {
                         <h3 class="card-title text-lg"><?= htmlspecialchars($article['title']) ?></h3>
                         <?php $excerpt = strip_tags($article['content']); ?>
                         <p class="text-base-content/70 line-clamp-3"><?= nl2br(htmlspecialchars(mb_substr($excerpt, 0, 160))) ?>...</p>
-                        <a href="#" class="link">Đọc tiếp</a>
+                        <a href="/index.php?page=article&id=<?= (int)$article['id'] ?>" class="link">Đọc tiếp</a>
                     </div>
                 </div>
             <?php endforeach; ?>
