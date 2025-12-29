@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const bookingForm = document.getElementById('booking-form');
     if (bookingForm) {
+        const doctorSelect = bookingForm.querySelector('[data-doctor-select]');
         bookingForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(bookingForm);
@@ -144,7 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
             suggestBtn.classList.add('loading');
             const date = appointmentInput?.value ? appointmentInput.value.split('T')[0] : new Date().toISOString().slice(0, 10);
             try {
-                const res = await apiFetch(`/api/availability.php?date=${date}`);
+                const params = new URLSearchParams({ date });
+                if (doctorSelect?.value) {
+                    params.set('doctor_id', doctorSelect.value);
+                }
+
+                const res = await apiFetch(`/api/availability.php?${params.toString()}`);
                 if (res.status === 'success') {
                     slotMeta.textContent = `Bác sĩ: ${res.data.slots[0].doctor_name} - Ngày ${res.data.date}`;
                     renderSlots(res.data.slots);

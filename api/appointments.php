@@ -23,6 +23,7 @@ $phone = trim($payload['phone'] ?? '');
 $email = trim($payload['email'] ?? '');
 $appointmentDate = trim($payload['appointment_date'] ?? '');
 $serviceId = !empty($payload['service_id']) ? (int)$payload['service_id'] : null;
+$doctorId = !empty($payload['doctor_id']) ? (int)$payload['doctor_id'] : null;
 $notes = trim($payload['notes'] ?? '');
 
 if ($fullName === '' || $phone === '' || $appointmentDate === '') {
@@ -48,7 +49,7 @@ if (!empty($_SESSION['user'])) {
 
 $appointmentModel->create([
     'customer_id' => $customerId,
-    'doctor_id' => null,
+    'doctor_id' => $doctorId,
     'service_id' => $serviceId,
     'full_name' => $fullName,
     'phone' => $phone,

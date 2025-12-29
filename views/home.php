@@ -468,6 +468,16 @@ if (empty($teamMembers)) {
                     </select>
                 </div>
 
+                <div class="form-control lg:col-span-1">
+                    <label class="label"><span class="label-text">Chọn bác sĩ (tuỳ chọn)</span></label>
+                    <select name="doctor_id" class="select select-bordered" data-doctor-select>
+                        <option value="">Để phòng khám sắp xếp</option>
+                        <?php foreach ($doctors as $doctor): ?>
+                            <option value="<?= $doctor['id'] ?>"><?= htmlspecialchars($doctor['full_name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <div class="form-control lg:col-span-2">
                     <label class="label"><span class="label-text">Thời gian mong muốn *</span></label>
                     <input type="datetime-local" name="appointment_date" class="input input-bordered" required>
