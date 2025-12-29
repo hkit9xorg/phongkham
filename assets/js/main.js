@@ -365,6 +365,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const moduleFormModal = document.getElementById('module-form-modal');
+    if (moduleFormModal) {
+        const moduleForm = moduleFormModal.querySelector('[data-module-form]');
+        const titleEl = moduleFormModal.querySelector('[data-form-title]');
+        const subtitleEl = moduleFormModal.querySelector('[data-form-subtitle]');
+        const createTitle = moduleFormModal.dataset.createTitle;
+        const editTitle = moduleFormModal.dataset.editTitle;
+        const createSubtitle = moduleFormModal.dataset.createSubtitle;
+        const editSubtitle = moduleFormModal.dataset.editSubtitle;
+
+        const setMode = (mode) => {
+            if (mode === 'edit') {
+                if (titleEl) titleEl.textContent = editTitle;
+                if (subtitleEl) subtitleEl.textContent = editSubtitle;
+            } else {
+                if (titleEl) titleEl.textContent = createTitle;
+                if (subtitleEl) subtitleEl.textContent = createSubtitle;
+            }
+        };
+
+        const resetModuleForm = () => {
+            if (!moduleForm) return;
+            moduleForm.reset();
+            const idInput = moduleForm.querySelector('input[name="id"]');
+            if (idInput) idInput.value = '';
+
+            moduleForm.querySelectorAll('[data-preview-target]').forEach((input) => {
+                const selector = input.dataset.previewTarget;
+                const preview = selector ? document.querySelector(selector) : null;
+                if (preview) {
+                    preview.src = '';
+                    preview.classList.add('hidden');
+                }
+                input.value = '';
+            });
+
+            moduleForm.querySelectorAll('[data-preview-image]').forEach((img) => {
+                img.src = '';
+                img.classList.add('hidden');
+            });
+
+            moduleForm.querySelectorAll('[data-wysiwyg]').forEach((wrapper) => {
+                const editor = wrapper.querySelector('[data-editor]');
+                const textarea = wrapper.querySelector('textarea');
+                if (editor) editor.innerHTML = '';
+                if (textarea) textarea.value = '';
+            });
+        };
+
+        document.querySelectorAll('[data-open-form]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                resetModuleForm();
+                setMode('create');
+                moduleFormModal.showModal();
+            });
+        });
+
+        moduleFormModal.querySelector('[data-close-modal]')?.addEventListener('click', () => {
+            moduleFormModal.close();
+        });
+
+        if (moduleFormModal.dataset.autoOpen === 'true') {
+            setMode('edit');
+            moduleFormModal.showModal();
+        } else {
+            setMode('create');
+        }
+    }
+
     const profileForm = document.getElementById('patient-profile-form');
     if (profileForm) {
         profileForm.addEventListener('submit', async (e) => {
