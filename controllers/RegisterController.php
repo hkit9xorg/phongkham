@@ -3,6 +3,7 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../helpers/Csrf.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Patient.php';
+require_once __DIR__ . '/../models/Appointment.php';
 
 $title = 'Đăng ký khách hàng';
 $errors = [];
@@ -44,6 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
         $patientModel = new Patient($pdo);
         $patientModel->create($userId, []);
+
+        $appointmentModel = new Appointment($pdo);
+        $appointmentModel->assignCustomerByPhone($phone, $userId);
         $_SESSION['user'] = [
             'id' => $userId,
             'name' => $fullName,

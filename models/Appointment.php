@@ -159,6 +159,20 @@ class Appointment
         ]);
     }
 
+    public function assignCustomerByPhone(string $phone, int $customerId): int
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE appointments SET customer_id = :customer_id, updated_at = NOW() WHERE phone = :phone AND (customer_id IS NULL OR customer_id = 0)'
+        );
+
+        $stmt->execute([
+            ':customer_id' => $customerId,
+            ':phone' => $phone,
+        ]);
+
+        return $stmt->rowCount();
+    }
+
     public function count(): int
     {
         $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM appointments');
