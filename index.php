@@ -21,6 +21,9 @@ switch ($page) {
     case 'admin':
         require __DIR__ . '/controllers/AdminController.php';
         break;
+    case 'article':
+        require __DIR__ . '/controllers/ArticleController.php';
+        break;
     case 'logout':
         session_destroy();
         header('Location: /index.php');
