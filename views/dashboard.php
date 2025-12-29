@@ -286,14 +286,22 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
     <div class="bg-base-100 p-4 rounded-box shadow space-y-4">
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-semibold flex items-center gap-2"><i class="ri-calendar-todo-line mr-2"></i>Lịch hẹn sắp tới</h2>
-            <span class="text-sm text-base-content/60">Chỉ hiển thị lịch đang chờ hoặc đã xác nhận</span>
+            <span class="text-sm text-base-content/60">Bạn có thể cập nhật hoặc huỷ những lịch hẹn đang mở.</span>
         </div>
         <div class="space-y-3">
             <?php foreach ($customerAppointments as $app): ?>
                 <div class="card bg-base-200 shadow-sm">
                     <div class="card-body py-3 space-y-2">
                         <div class="flex items-center justify-between">
-                            <div class="font-semibold"><?= htmlspecialchars($app['service_name'] ?? 'Tư vấn') ?></div>
+                            <div>
+                                <div class="font-semibold flex items-center gap-2">
+                                    <span>#<?= (int)$app['id'] ?></span>
+                                    <span><?= htmlspecialchars($app['service_name'] ?? 'Tư vấn') ?></span>
+                                </div>
+                                <?php if (!empty($app['doctor_name'])): ?>
+                                    <p class="text-xs text-base-content/70">Bác sĩ: <?= htmlspecialchars($app['doctor_name']) ?></p>
+                                <?php endif; ?>
+                            </div>
                             <div class="badge badge-outline capitalize"><?= htmlspecialchars($app['status']) ?></div>
                         </div>
                         <p class="text-sm text-base-content/70 flex items-center gap-2"><i class="ri-time-line"></i><?= htmlspecialchars($app['appointment_date']) ?></p>
@@ -313,6 +321,14 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                             <div class="md:col-span-2">
                                 <button class="btn btn-primary btn-sm" type="submit"><i class="ri-calendar-check-line mr-1"></i>Gửi yêu cầu dời lịch</button>
                             </div>
+                        </form>
+                        <form class="appointment-cancel-form flex flex-col md:flex-row md:items-end gap-3" data-id="<?= $app['id'] ?>">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+                            <label class="form-control w-full md:max-w-xs">
+                                <span class="label-text">Lý do huỷ (tuỳ chọn)</span>
+                                <input type="text" name="note" class="input input-bordered" placeholder="Ví dụ: đổi kế hoạch" />
+                            </label>
+                            <button class="btn btn-outline btn-error btn-sm" type="submit"><i class="ri-close-circle-line mr-1"></i>Huỷ lịch hẹn</button>
                         </form>
                     </div>
                 </div>

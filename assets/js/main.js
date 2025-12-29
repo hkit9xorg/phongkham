@@ -268,6 +268,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    document.querySelectorAll('.appointment-cancel-form').forEach((form) => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!confirm('Bạn chắc chắn muốn hủy lịch hẹn này?')) return;
+
+            const payload = Object.fromEntries(new FormData(form).entries());
+            payload.id = form.dataset.id;
+            const res = await apiFetch('/api/appointment_cancel.php', { method: 'POST', body: JSON.stringify(payload) });
+            showModal(res.status === 'success' ? 'Đã hủy lịch' : 'Lỗi', res.message);
+        });
+    });
+
     const appointmentModal = document.getElementById('appointment-edit-modal');
     if (appointmentModal) {
         const idInput = appointmentModal.querySelector('[data-appointment-id]');
