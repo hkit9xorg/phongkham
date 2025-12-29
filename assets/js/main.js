@@ -248,6 +248,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    document.querySelectorAll('.appointment-reschedule-toggle').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const card = btn.closest('.card-body');
+            const rescheduleForm = card?.querySelector('.appointment-reschedule-form');
+            const cancelForm = card?.querySelector('.appointment-cancel-form');
+            if (!rescheduleForm) return;
+
+            const isHidden = rescheduleForm.classList.contains('hidden');
+            rescheduleForm.classList.toggle('hidden');
+            if (isHidden) {
+                cancelForm?.classList.add('hidden');
+            }
+        });
+    });
+
+    document.querySelectorAll('.appointment-cancel-toggle').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const card = btn.closest('.card-body');
+            const cancelForm = card?.querySelector('.appointment-cancel-form');
+            const rescheduleForm = card?.querySelector('.appointment-reschedule-form');
+            if (!cancelForm) return;
+
+            const isHidden = cancelForm.classList.contains('hidden');
+            cancelForm.classList.toggle('hidden');
+            if (isHidden) {
+                rescheduleForm?.classList.add('hidden');
+            }
+        });
+    });
+
+    document.querySelectorAll('[data-hide-reschedule]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const form = btn.closest('.appointment-reschedule-form');
+            form?.classList.add('hidden');
+        });
+    });
+
+    document.querySelectorAll('[data-hide-cancel]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const form = btn.closest('.appointment-cancel-form');
+            form?.classList.add('hidden');
+        });
+    });
+
     document.querySelectorAll('.appointment-update-form').forEach((form) => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
