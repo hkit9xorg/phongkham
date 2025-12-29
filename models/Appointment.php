@@ -145,6 +145,20 @@ class Appointment
         ]);
     }
 
+    public function cancelByCustomer(int $id, int $customerId, ?string $note = null): bool
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE appointments SET status = "cancelled", notes = COALESCE(:note, notes), updated_at = NOW()
+             WHERE id = :id AND customer_id = :customer_id AND status IN ("pending", "confirmed", "rescheduled")'
+        );
+
+        return $stmt->execute([
+            ':id' => $id,
+            ':customer_id' => $customerId,
+            ':note' => $note,
+        ]);
+    }
+
     public function count(): int
     {
         $stmt = $this->pdo->query('SELECT COUNT(*) AS total FROM appointments');
