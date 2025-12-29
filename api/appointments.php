@@ -60,9 +60,14 @@ $appointmentModel->create([
     'notes' => $notes,
 ]);
 
+$registerParams = http_build_query([
+    'full_name' => $fullName,
+    'phone' => $phone,
+]);
+
 $responseData = [
     'suggest_register' => !$existingUser && empty($_SESSION['user']),
-    'register_url' => '/index.php?page=register',
+    'register_url' => '/index.php?page=register' . ($registerParams ? '&' . $registerParams : ''),
 ];
 
 Response::json('success', 'Đã nhận yêu cầu đặt lịch. Chúng tôi sẽ xác nhận sớm nhất.', $responseData);

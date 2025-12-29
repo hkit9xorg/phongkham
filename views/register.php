@@ -19,11 +19,11 @@
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                 <div class="form-control">
                     <label class="label"><span class="label-text">Họ tên *</span></label>
-                    <input type="text" name="full_name" class="input input-bordered" required>
+                    <input type="text" name="full_name" class="input input-bordered" required value="<?= htmlspecialchars($fullName ?? '') ?>">
                 </div>
                 <div class="form-control">
                     <label class="label"><span class="label-text">Số điện thoại *</span></label>
-                    <input type="tel" name="phone" class="input input-bordered" required placeholder="09xx">
+                    <input type="tel" name="phone" class="input input-bordered" required placeholder="09xx" value="<?= htmlspecialchars($phone ?? '') ?>">
                 </div>
                 <div class="form-control">
                     <label class="label"><span class="label-text">Mật khẩu *</span></label>
