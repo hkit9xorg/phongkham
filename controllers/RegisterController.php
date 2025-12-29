@@ -8,10 +8,10 @@ require_once __DIR__ . '/../models/Appointment.php';
 $title = 'Đăng ký khách hàng';
 $errors = [];
 $success = null;
+$fullName = trim($_POST['full_name'] ?? ($_GET['full_name'] ?? ''));
+$phone = trim($_POST['phone'] ?? ($_GET['phone'] ?? ''));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $fullName = trim($_POST['full_name'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
     $password = $_POST['password'] ?? '';
     $passwordConfirm = $_POST['password_confirm'] ?? '';
     $token = $_POST['csrf_token'] ?? '';
@@ -56,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'role' => 'customer',
         ];
         $success = 'Đăng ký thành công. Bạn đã được đăng nhập với vai trò khách hàng.';
+        $fullName = '';
+        $phone = '';
     }
 }
 
