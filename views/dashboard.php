@@ -308,7 +308,11 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                         <?php if (!empty($app['notes'])): ?>
                             <p class="text-sm text-base-content/70">Ghi chú: <?= htmlspecialchars($app['notes']) ?></p>
                         <?php endif; ?>
-                        <form class="appointment-reschedule-form grid md:grid-cols-2 gap-3" data-id="<?= $app['id'] ?>">
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn btn-primary btn-sm appointment-reschedule-toggle" type="button"><i class="ri-calendar-check-line mr-1"></i>Thay đổi lịch</button>
+                            <button class="btn btn-outline btn-error btn-sm appointment-cancel-toggle" type="button"><i class="ri-close-circle-line mr-1"></i>Huỷ lịch hẹn</button>
+                        </div>
+                        <form class="appointment-reschedule-form grid md:grid-cols-2 gap-3 hidden" data-id="<?= $app['id'] ?>">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                             <label class="form-control">
                                 <span class="label-text">Thời gian muốn dời</span>
@@ -318,17 +322,21 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                                 <span class="label-text">Lý do (tuỳ chọn)</span>
                                 <input type="text" name="note" class="input input-bordered" placeholder="Ví dụ: bận công việc">
                             </label>
-                            <div class="md:col-span-2">
-                                <button class="btn btn-primary btn-sm" type="submit"><i class="ri-calendar-check-line mr-1"></i>Gửi yêu cầu dời lịch</button>
+                            <div class="md:col-span-2 flex items-center gap-2">
+                                <button class="btn btn-primary btn-sm" type="submit"><i class="ri-send-plane-line mr-1"></i>Gửi yêu cầu dời lịch</button>
+                                <button class="btn btn-ghost btn-xs" type="button" data-hide-reschedule>Ẩn</button>
                             </div>
                         </form>
-                        <form class="appointment-cancel-form flex flex-col md:flex-row md:items-end gap-3" data-id="<?= $app['id'] ?>">
+                        <form class="appointment-cancel-form flex flex-col md:flex-row md:items-end gap-3 hidden" data-id="<?= $app['id'] ?>">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                             <label class="form-control w-full md:max-w-xs">
                                 <span class="label-text">Lý do huỷ (tuỳ chọn)</span>
                                 <input type="text" name="note" class="input input-bordered" placeholder="Ví dụ: đổi kế hoạch" />
                             </label>
-                            <button class="btn btn-outline btn-error btn-sm" type="submit"><i class="ri-close-circle-line mr-1"></i>Huỷ lịch hẹn</button>
+                            <div class="flex items-center gap-2">
+                                <button class="btn btn-outline btn-error btn-sm" type="submit"><i class="ri-close-circle-line mr-1"></i>Huỷ lịch hẹn</button>
+                                <button class="btn btn-ghost btn-xs" type="button" data-hide-cancel>Ẩn</button>
+                            </div>
                         </form>
                     </div>
                 </div>
