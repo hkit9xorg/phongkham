@@ -88,10 +88,9 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
                 <h2 class="text-2xl font-semibold flex items-center gap-2"><i class="ri-notification-badge-line"></i>Thay đổi lịch hẹn gần đây</h2>
-                <p class="text-sm text-base-content/60">Hiển thị tối đa 8 thay đổi mới nhất theo quyền của bạn.</p>
             </div>
             <div class="flex items-center gap-2">
-                <span class="badge <?= $unreadChanges > 0 ? 'badge-error' : 'badge-ghost' ?>" data-unread-count data-count="<?= $unreadChanges ?>">Chưa xem: <?= $unreadChanges ?></span>
+                <span class="text-white badge <?= $unreadChanges > 0 ? 'badge-error' : 'badge-ghost' ?>" data-unread-count data-count="<?= $unreadChanges ?>">Chưa xem: <?= $unreadChanges ?></span>
             </div>
         </div>
 
@@ -123,11 +122,8 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                                 </button>
                             </div>
                         </div>
-                        <div class="text-sm bg-base-100 rounded-box p-3 space-y-1">
-                            <div class="flex items-center gap-2"><i class="ri-time-line"></i><span>Thời gian đổi</span></div>
-                            <p>Từ <strong><?= htmlspecialchars($change['old_date']) ?></strong></p>
-                            <p>Sang <strong><?= htmlspecialchars($change['new_date']) ?></strong></p>
-                        </div>
+                        <p><i class="ri-time-line"></i> <span class="line-through"><?= htmlspecialchars($change['old_date']) ?></span> <span class="badge badge-warning"><?= htmlspecialchars($change['new_date']) ?></span></p>
+                        
                         <p class="text-xs text-base-content/70 flex items-center gap-2">
                             <i class="ri-user-voice-line"></i>
                             <span>Cập nhật bởi <?= htmlspecialchars($change['changer_name'] ?? 'Hệ thống') ?> (<?= htmlspecialchars($change['changed_by_role']) ?>) • <?= htmlspecialchars(date('d/m/Y H:i', strtotime($change['created_at']))) ?></span>
@@ -323,12 +319,12 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                         <td><?= htmlspecialchars($schedule['end_time']) ?></td>
                         <td><?= htmlspecialchars($schedule['note']) ?></td>
                         <td>
-                            <button type="button" class="btn btn-ghost btn-xs" data-schedule-trigger
+                            <button type="button" class="btn btn-ghost btn-sm bg-primary text-white hover:bg-primary/80" data-schedule-trigger
                                     data-date="<?= htmlspecialchars($schedule['work_date']) ?>"
                                     data-start="<?= htmlspecialchars($schedule['start_time']) ?>"
                                     data-end="<?= htmlspecialchars($schedule['end_time']) ?>"
                                     data-note="<?= htmlspecialchars($schedule['note']) ?>">
-                                Xem
+                                    <i class="ri-eye-line"></i> Chi tiết
                             </button>
                         </td>
                     </tr>
@@ -428,13 +424,6 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                         </div>
                         <p class="text-sm text-base-content/70 flex items-center gap-2"><i class="ri-time-line"></i><?= htmlspecialchars($app['appointment_date']) ?></p>
                         <?php $change = $appointmentChanges[$app['id']] ?? null; ?>
-                        <?php if ($change): ?>
-                            <div class="alert alert-info py-2 px-3 text-sm">
-                                <div class="font-semibold flex items-center gap-2"><i class="ri-notification-2-line"></i>Thời gian đã thay đổi</div>
-                                <p class="mt-1">Từ <strong><?= htmlspecialchars($change['old_date']) ?></strong> ➜ <strong><?= htmlspecialchars($change['new_date']) ?></strong></p>
-                                <p class="text-xs text-base-content/70">Cập nhật lúc <?= htmlspecialchars(date('d/m/Y H:i', strtotime($change['created_at']))) ?></p>
-                            </div>
-                        <?php endif; ?>
                         <?php if (!empty($app['notes'])): ?>
                             <p class="text-sm text-base-content/70">Ghi chú: <?= htmlspecialchars($app['notes']) ?></p>
                         <?php endif; ?>

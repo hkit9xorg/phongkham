@@ -77,12 +77,12 @@
                                 <td><?= $item['is_active'] ? 'Hiển thị' : 'Ẩn' ?></td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">
-                                        <a class="link" href="/index.php?page=admin&module=services&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
+                                        <a class="btn btn-sm btn-primary text-white" href="/index.php?page=admin&module=services&edit_id=<?= $item['id'] ?>"><i class="ri-edit-2-line mr-1"></i>Chỉnh sửa</a>
                                         <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa dịch vụ này?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
                                             <input type="hidden" name="action" value="delete">
-                                            <button type="submit" class="link text-error">Xóa</button>
+                                            <button type="submit" class="btn btn-sm btn-error text-white"><i class="ri-delete-bin-line mr-1"></i>Xóa</button>
                                         </form>
                                     </div>
                                 </td>
@@ -108,12 +108,12 @@
                                 <td><?= htmlspecialchars($item['author_name'] ?? '') ?></td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">
-                                        <a class="link" href="/index.php?page=admin&module=articles&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
+                                        <a class="btn btn-sm btn-primary" href="/index.php?page=admin&module=articles&edit_id=<?= $item['id'] ?>"><i class="ri-edit-2-line mr-1"></i>Chỉnh sửa</a>
                                         <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
                                             <input type="hidden" name="action" value="delete">
-                                            <button type="submit" class="link text-error">Xóa</button>
+                                            <button type="submit" class="btn btn-sm btn-error text-white"><i class="ri-delete-bin-line mr-1"></i>Xóa</button>
                                         </form>
                                     </div>
                                 </td>
@@ -134,12 +134,12 @@
                                 <td><?= (int)$item['is_active'] === 1 ? 'Hiển thị' : 'Ẩn' ?></td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">
-                                        <a class="link" href="/index.php?page=admin&module=doctors&edit_id=<?= $item['id'] ?>">Chỉnh sửa</a>
+                                        <a class="btn btn-sm btn-primary text-white" href="/index.php?page=admin&module=doctors&edit_id=<?= $item['id'] ?>"><i class="ri-edit-2-line mr-1"></i>Chỉnh sửa</a>
                                         <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa bác sĩ này?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
                                             <input type="hidden" name="action" value="delete">
-                                            <button type="submit" class="link text-error">Xóa</button>
+                                            <button type="submit" class="btn btn-sm btn-error text-white"><i class="ri-delete-bin-line mr-1"></i>Xóa</button>
                                         </form>
                                     </div>
                                 </td>
@@ -155,16 +155,22 @@
                             <tr>
                                 <td><?= htmlspecialchars($item['full_name']) ?></td>
                                 <td><?= htmlspecialchars($item['phone'] ?? 'Chưa cập nhật') ?></td>
-                                <td><span class="badge badge-outline capitalize"><?= htmlspecialchars($item['role']) ?></span></td>
+                                <?php if ($item['role'] === 'admin'): ?>
+                                    <td><span class="badge badge-outline capitalize badge-error">Quản trị</span></td>
+                                <?php elseif ($item['role'] === 'doctor'): ?>                                
+                                    <td><span class="badge badge-outline capitalize badge-warning">Bác sĩ</span></td>
+                                <?php else: ?>
+                                    <td><span class="badge badge-outline capitalize badge-success">Khách hàng</span></td>
+                                <?php endif; ?>
                                 <td><?= (int)$item['is_active'] === 1 ? 'Hoạt động' : 'Khoá' ?></td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">
-                                        <a class="link" href="/index.php?page=admin&module=users&edit_id=<?= $item['id'] ?>">Cập nhật quyền</a>
+                                        <a class="btn btn-sm btn-primary" href="/index.php?page=admin&module=users&edit_id=<?= $item['id'] ?>"><i class="ri-edit-2-line mr-1"></i>Cập nhật quyền</a>
                                         <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa người dùng này?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
                                             <input type="hidden" name="action" value="delete">
-                                            <button type="submit" class="link text-error">Xóa</button>
+                                            <button type="submit" class="btn btn-sm btn-error text-white"><i class="ri-delete-bin-line mr-1"></i>Xóa</button>
                                         </form>
                                     </div>
                                 </td>
@@ -235,7 +241,7 @@
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
                                             <input type="hidden" name="action" value="delete">
-                                            <button type="submit" class="btn btn-sm btn-error">
+                                            <button type="submit" class="btn btn-sm btn-error text-white">
                                                 <i class="ri-delete-bin-line mr-1"></i>
                                                 <span>Xóa</span>
                                             </button>

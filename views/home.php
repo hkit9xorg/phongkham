@@ -478,7 +478,7 @@ if (empty($teamMembers)) {
                     </select>
                 </div>
 
-                <div class="form-control lg:col-span-2">
+                <div class="form-control lg:col-span-1">
                     <label class="label"><span class="label-text">Thời gian mong muốn *</span></label>
                     <input type="datetime-local" name="appointment_date" class="input input-bordered" required>
 
