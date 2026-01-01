@@ -147,7 +147,7 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
         <table class="table" id="appointment-table">
             <thead>
                 <tr>
-                    <th>Khách hàng</th><th>Dịch vụ</th><th>Ngày giờ</th><th>Trạng thái</th><th>Bác sĩ</th><th>Ghi chú</th>
+                    <th>Khách hàng</th><th>Dịch vụ</th><th>Ngày giờ</th><th>Trạng thái</th><th>Thay đổi gần nhất</th><th>Bác sĩ</th><th>Ghi chú</th>
                     <?php if ($canUpdateAppointment && $isDoctor): ?><th>Thao tác</th><?php endif; ?>
                 </tr>
             </thead>
@@ -158,6 +158,18 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                         <td><?= htmlspecialchars($app['service_name'] ?? 'Tư vấn') ?></td>
                         <td><?= htmlspecialchars($app['appointment_date']) ?></td>
                         <td><span class="badge badge-outline badge-sm capitalize"><?= htmlspecialchars($app['status']) ?></span></td>
+                        <td>
+                            <?php $change = $appointmentChanges[$app['id']] ?? null; ?>
+                            <?php if ($change): ?>
+                                <div class="text-xs space-y-1">
+                                    <div class="badge badge-info badge-outline gap-1"><i class="ri-notification-3-line"></i><span>Đã đổi</span></div>
+                                    <div>Từ <strong><?= htmlspecialchars($change['old_date']) ?></strong></div>
+                                    <div>Sang <strong><?= htmlspecialchars($change['new_date']) ?></strong></div>
+                                </div>
+                            <?php else: ?>
+                                <span class="text-xs text-base-content/60">Không có</span>
+                            <?php endif; ?>
+                        </td>
                         <td><?= htmlspecialchars($app['doctor_name'] ?? '') ?></td>
                         <td><?= htmlspecialchars($app['notes'] ?? '') ?></td>
                         <?php if ($canUpdateAppointment && $isDoctor): ?>
@@ -353,6 +365,14 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                             <div class="badge badge-outline capitalize"><?= htmlspecialchars($app['status']) ?></div>
                         </div>
                         <p class="text-sm text-base-content/70 flex items-center gap-2"><i class="ri-time-line"></i><?= htmlspecialchars($app['appointment_date']) ?></p>
+                        <?php $change = $appointmentChanges[$app['id']] ?? null; ?>
+                        <?php if ($change): ?>
+                            <div class="alert alert-info py-2 px-3 text-sm">
+                                <div class="font-semibold flex items-center gap-2"><i class="ri-notification-2-line"></i>Thời gian đã thay đổi</div>
+                                <p class="mt-1">Từ <strong><?= htmlspecialchars($change['old_date']) ?></strong> ➜ <strong><?= htmlspecialchars($change['new_date']) ?></strong></p>
+                                <p class="text-xs text-base-content/70">Cập nhật lúc <?= htmlspecialchars(date('d/m/Y H:i', strtotime($change['created_at']))) ?></p>
+                            </div>
+                        <?php endif; ?>
                         <?php if (!empty($app['notes'])): ?>
                             <p class="text-sm text-base-content/70">Ghi chú: <?= htmlspecialchars($app['notes']) ?></p>
                         <?php endif; ?>
