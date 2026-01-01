@@ -5,6 +5,7 @@ require_once __DIR__ . '/../models/Article.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Appointment.php';
 require_once __DIR__ . '/../models/AppointmentChange.php';
+require_once __DIR__ . '/../models/AppointmentChangeView.php';
 require_once __DIR__ . '/../models/DoctorSchedule.php';
 require_once __DIR__ . '/../models/Patient.php';
 require_once __DIR__ . '/../models/Doctor.php';
@@ -22,6 +23,7 @@ $articleModel = new Article($pdo);
 $userModel = new User($pdo);
 $appointmentModel = new Appointment($pdo);
 $appointmentChangeModel = new AppointmentChange($pdo);
+$changeViewModel = new AppointmentChangeView($pdo);
 $scheduleModel = new DoctorSchedule($pdo);
 $patientModel = new Patient($pdo);
 $doctorModel = new Doctor($pdo);
@@ -51,6 +53,7 @@ $appointmentHistory = [];
 $doctorSchedules = [];
 $patientProfile = null;
 $doctorProfile = null;
+$recentChangeNotifications = [];
 if ($user['role'] === 'customer') {
     $appointments = $appointmentModel->listForUser($user['id']);
     $customerAppointments = array_filter($appointments, static function ($appointment) {
@@ -76,6 +79,14 @@ if ($user['role'] === 'customer') {
 
 if (!empty($appointments)) {
     $appointmentChanges = $appointmentChangeModel->latestForAppointments(array_column($appointments, 'id'));
+}
+
+if ($user['role'] === 'admin') {
+    $recentChangeNotifications = $changeViewModel->recentForUser($user, null, 8);
+} elseif ($user['role'] === 'doctor' && $doctorProfile) {
+    $recentChangeNotifications = $changeViewModel->recentForUser($user, (int)$doctorProfile['id'], 8);
+} elseif ($user['role'] === 'customer') {
+    $recentChangeNotifications = $changeViewModel->recentForUser($user, null, 8);
 }
 
 $title = 'Dashboard';

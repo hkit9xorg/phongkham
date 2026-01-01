@@ -51,4 +51,19 @@ class AppointmentChange
 
         return $latest;
     }
+
+    public function find(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT ac.*, a.customer_id, a.doctor_id
+             FROM appointment_changes ac
+             INNER JOIN appointments a ON ac.appointment_id = a.id
+             WHERE ac.id = :id'
+        );
+
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
 }

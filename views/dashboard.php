@@ -81,6 +81,68 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
     <?php endif; ?>
 </section>
 
+<?php $unreadChanges = array_sum(array_map(static fn($item) => $item['is_read'] ? 0 : 1, $recentChangeNotifications)); ?>
+<?php if (in_array($user['role'], ['admin', 'doctor', 'customer'], true)): ?>
+<section class="mb-8">
+    <div class="bg-base-100 p-5 rounded-box shadow space-y-3">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+                <h2 class="text-2xl font-semibold flex items-center gap-2"><i class="ri-notification-badge-line"></i>Thay đổi lịch hẹn gần đây</h2>
+                <p class="text-sm text-base-content/60">Hiển thị tối đa 8 thay đổi mới nhất theo quyền của bạn.</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="badge <?= $unreadChanges > 0 ? 'badge-error' : 'badge-ghost' ?>" data-unread-count data-count="<?= $unreadChanges ?>">Chưa xem: <?= $unreadChanges ?></span>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-3">
+            <?php foreach ($recentChangeNotifications as $change): ?>
+                <div class="card bg-base-200 shadow-sm" data-change-row>
+                    <div class="card-body space-y-2">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="space-y-1">
+                                <div class="font-semibold flex flex-wrap items-center gap-2">
+                                    <span>#<?= (int)$change['appointment_id'] ?></span>
+                                    <span class="text-primary"><?= htmlspecialchars($change['service_name'] ?? 'Tư vấn') ?></span>
+                                </div>
+                                <p class="text-xs text-base-content/70">Trạng thái: <span class="badge badge-ghost badge-sm capitalize"><?= htmlspecialchars($change['appointment_status'] ?? 'pending') ?></span></p>
+                                <?php if (!empty($change['appointment_name'])): ?>
+                                    <p class="text-xs text-base-content/70">Khách hàng: <?= htmlspecialchars($change['appointment_name']) ?></p>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex flex-col gap-2 items-end">
+                                <span class="badge badge-sm <?= $change['is_read'] ? 'badge-success' : 'badge-warning' ?>" data-change-state>
+                                    <?= $change['is_read'] ? 'Đã xem' : 'Chưa xem' ?>
+                                </span>
+                                <button type="button" class="btn btn-xs <?= $change['is_read'] ? 'btn-ghost' : 'btn-primary' ?>"
+                                        data-change-toggle
+                                        data-id="<?= (int)$change['change_id'] ?>"
+                                        data-read="<?= $change['is_read'] ? '1' : '0' ?>">
+                                    <i class="ri-eye-line"></i>
+                                    <span><?= $change['is_read'] ? 'Đánh dấu chưa xem' : 'Đánh dấu đã xem' ?></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-sm bg-base-100 rounded-box p-3 space-y-1">
+                            <div class="flex items-center gap-2"><i class="ri-time-line"></i><span>Thời gian đổi</span></div>
+                            <p>Từ <strong><?= htmlspecialchars($change['old_date']) ?></strong></p>
+                            <p>Sang <strong><?= htmlspecialchars($change['new_date']) ?></strong></p>
+                        </div>
+                        <p class="text-xs text-base-content/70 flex items-center gap-2">
+                            <i class="ri-user-voice-line"></i>
+                            <span>Cập nhật bởi <?= htmlspecialchars($change['changer_name'] ?? 'Hệ thống') ?> (<?= htmlspecialchars($change['changed_by_role']) ?>) • <?= htmlspecialchars(date('d/m/Y H:i', strtotime($change['created_at']))) ?></span>
+                        </p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <?php if (empty($recentChangeNotifications)): ?>
+                <p class="text-sm text-base-content/60">Chưa có thay đổi lịch hẹn nào phù hợp với tài khoản của bạn.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <?php if ($isAdmin): ?>
 <section class="grid lg:grid-cols-3 gap-4 mb-10">
     <div class="bg-base-100 p-5 rounded-box shadow lg:col-span-2 space-y-3">
