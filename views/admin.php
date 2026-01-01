@@ -174,32 +174,58 @@
                 </table>
             <?php else: ?>
                 <table class="table">
-                    <thead><tr><th>Khách hàng</th><th>Dịch vụ</th><th>Ngày giờ</th><th>Trạng thái</th><th class="text-right">Thao tác</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Khách hàng</th>
+                            <th>Dịch vụ</th>
+                            <th>Người phụ trách</th>
+                            <th>Ngày giờ</th>
+                            <th>Trạng thái</th>
+                            <th class="text-right">Thao tác</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
                                 <td><?= htmlspecialchars($item['full_name']) ?></td>
                                 <td><?= htmlspecialchars($item['service_name'] ?? 'Tư vấn') ?></td>
+                                <td>
+                                    <?php if (!empty($item['doctor_name'])): ?>
+                                        <div class="badge badge-outline badge-primary gap-1">
+                                            <i class="ri-user-heart-line"></i>
+                                            <span><?= htmlspecialchars($item['doctor_name']) ?></span>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="badge badge-ghost">Chưa gán</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= htmlspecialchars($item['appointment_date']) ?></td>
                                 <td><?= htmlspecialchars($item['status']) ?></td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">
-                                        <button type="button" class="link" data-appointment-trigger
-                                                data-id="<?= (int)$item['id'] ?>"
-                                                data-name="<?= htmlspecialchars($item['full_name']) ?>"
-                                                data-phone="<?= htmlspecialchars($item['phone'] ?? '') ?>"
-                                                data-service="<?= htmlspecialchars($item['service_name'] ?? 'Tư vấn') ?>"
-                                                data-date="<?= htmlspecialchars($item['appointment_date']) ?>"
-                                                data-status="<?= htmlspecialchars($item['status']) ?>"
-                                                data-doctor-id="<?= htmlspecialchars($item['doctor_id'] ?? '') ?>"
-                                                data-notes="<?= htmlspecialchars($item['notes'] ?? '') ?>">
-                                            Chỉnh sửa
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-primary"
+                                            data-appointment-trigger
+                                            data-id="<?= (int)$item['id'] ?>"
+                                            data-name="<?= htmlspecialchars($item['full_name']) ?>"
+                                            data-phone="<?= htmlspecialchars($item['phone'] ?? '') ?>"
+                                            data-service="<?= htmlspecialchars($item['service_name'] ?? 'Tư vấn') ?>"
+                                            data-date="<?= htmlspecialchars($item['appointment_date']) ?>"
+                                            data-status="<?= htmlspecialchars($item['status']) ?>"
+                                            data-doctor-id="<?= htmlspecialchars($item['doctor_id'] ?? '') ?>"
+                                            data-notes="<?= htmlspecialchars($item['notes'] ?? '') ?>">
+                                            <i class="ri-edit-2-line mr-1"></i>
+                                            <span>Chỉnh sửa</span>
                                         </button>
                                         <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa lịch hẹn này?');">
                                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
                                             <input type="hidden" name="id" value="<?= (int)$item['id'] ?>">
                                             <input type="hidden" name="action" value="delete">
-                                            <button type="submit" class="link text-error">Xóa</button>
+                                            <button type="submit" class="btn btn-sm btn-error">
+                                                <i class="ri-delete-bin-line mr-1"></i>
+                                                <span>Xóa</span>
+                                            </button>
                                         </form>
                                     </div>
                                 </td>
