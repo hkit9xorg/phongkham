@@ -481,6 +481,63 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const changeButtons = document.querySelectorAll('[data-change-toggle]');
+    if (changeButtons.length) {
+        const unreadBadge = document.querySelector('[data-unread-count]');
+
+        const updateUnreadBadge = (delta) => {
+            if (!unreadBadge) return;
+            const current = parseInt(unreadBadge.dataset.count || '0', 10);
+            const next = Math.max(0, current + delta);
+            unreadBadge.dataset.count = String(next);
+            unreadBadge.textContent = `Chưa xem: ${next}`;
+            unreadBadge.classList.toggle('badge-error', next > 0);
+            unreadBadge.classList.toggle('badge-ghost', next === 0);
+        };
+
+        changeButtons.forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const changeId = btn.dataset.id;
+                const isRead = btn.dataset.read === '1';
+                const label = btn.querySelector('span');
+                const stateBadge = btn.closest('[data-change-row]')?.querySelector('[data-change-state]');
+
+                btn.setAttribute('disabled', 'disabled');
+
+                try {
+                    const res = await apiFetch('/api/appointment_change_view.php', {
+                        method: 'POST',
+                        body: JSON.stringify({ change_id: changeId, mark: isRead ? 'unread' : 'read' }),
+                    });
+
+                    showModal(res.status === 'success' ? 'Cập nhật thông báo' : 'Lỗi', res.message);
+
+                    if (res.status === 'success') {
+                        const nextRead = !isRead;
+                        btn.dataset.read = nextRead ? '1' : '0';
+                        btn.classList.toggle('btn-primary', !nextRead);
+                        btn.classList.toggle('btn-ghost', nextRead);
+                        if (label) {
+                            label.textContent = nextRead ? 'Đánh dấu chưa xem' : 'Đánh dấu đã xem';
+                        }
+
+                        if (stateBadge) {
+                            stateBadge.textContent = nextRead ? 'Đã xem' : 'Chưa xem';
+                            stateBadge.classList.toggle('badge-success', nextRead);
+                            stateBadge.classList.toggle('badge-warning', !nextRead);
+                        }
+
+                        updateUnreadBadge(isRead ? 1 : -1);
+                    }
+                } catch (error) {
+                    showModal('Lỗi', 'Không thể cập nhật trạng thái thông báo.');
+                } finally {
+                    btn.removeAttribute('disabled');
+                }
+            });
+        });
+    }
+
     const initSliders = () => {
         document.querySelectorAll('[data-auto-slider]').forEach((slider) => {
             const slides = slider.querySelectorAll('[data-slide]');

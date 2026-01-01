@@ -97,6 +97,18 @@ CREATE TABLE appointment_changes (
     FOREIGN KEY (changed_by) REFERENCES users(id)
 );
 
+CREATE TABLE appointment_change_views (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    change_id INT NOT NULL,
+    user_id INT NOT NULL,
+    is_read TINYINT(1) NOT NULL DEFAULT 0,
+    read_at DATETIME NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_change_user (change_id, user_id),
+    FOREIGN KEY (change_id) REFERENCES appointment_changes(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 CREATE TABLE doctor_schedules (
     id INT AUTO_INCREMENT PRIMARY KEY,
     doctor_id INT NOT NULL,
