@@ -162,18 +162,18 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                         <td><?= htmlspecialchars($app['notes'] ?? '') ?></td>
                         <?php if ($canUpdateAppointment && $isDoctor): ?>
                             <td>
-                                <form class="appointment-update-form space-y-1" data-id="<?= $app['id'] ?>">
-                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
-                                    <input type="hidden" name="doctor_id" value="<?= isset($doctorProfile['id']) ? (int)$doctorProfile['id'] : '' ?>">
-                                    <select name="status" class="select select-bordered select-sm w-full">
-                                        <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
-                                            <option value="<?= $st ?>" <?= ($app['status'] ?? '') === $st ? 'selected' : '' ?>><?= $st ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <input type="datetime-local" name="appointment_date" class="input input-bordered input-sm w-full" value="<?= isset($app['appointment_date']) ? date('Y-m-d\\TH:i', strtotime($app['appointment_date'])) : '' ?>">
-                                    <textarea name="notes" rows="2" class="textarea textarea-bordered textarea-xs w-full" placeholder="Ghi chú"><?= htmlspecialchars($app['notes'] ?? '') ?></textarea>
-                                    <button type="submit" class="btn btn-primary btn-sm w-full"><i class="ri-save-line mr-1"></i>Cập nhật</button>
-                                </form>
+                                <button type="button" class="btn btn-primary btn-sm w-full text-white flex items-center justify-center gap-1" data-appointment-trigger
+                                        data-id="<?= $app['id'] ?>"
+                                        data-date="<?= isset($app['appointment_date']) ? htmlspecialchars(date('Y-m-d\\TH:i', strtotime($app['appointment_date']))) : '' ?>"
+                                        data-status="<?= htmlspecialchars($app['status'] ?? 'pending') ?>"
+                                        data-doctor-id="<?= isset($doctorProfile['id']) ? (int)$doctorProfile['id'] : '' ?>"
+                                        data-notes="<?= htmlspecialchars($app['notes'] ?? '') ?>"
+                                        data-name="<?= htmlspecialchars($app['full_name'] ?? $app['customer_name'] ?? 'Khách lẻ') ?>"
+                                        data-phone="<?= htmlspecialchars($app['phone'] ?? '') ?>"
+                                        data-service="<?= htmlspecialchars($app['service_name'] ?? 'Tư vấn') ?>">
+                                    <i class="ri-edit-2-line"></i>
+                                    <span>Cập nhật</span>
+                                </button>
                             </td>
                         <?php endif; ?>
                     </tr>
@@ -185,6 +185,54 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
         <?php endif; ?>
     </div>
 </section>
+<?php endif; ?>
+
+<?php if ($canUpdateAppointment && $isDoctor): ?>
+<dialog id="appointment-edit-modal" class="modal">
+    <div class="modal-box w-11/12 max-w-xl">
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <h3 class="font-bold text-lg">Cập nhật lịch hẹn</h3>
+                <p class="text-sm text-base-content/70">Điều chỉnh trạng thái, thời gian và ghi chú khám.</p>
+            </div>
+            <form method="dialog">
+                <button class="btn btn-sm btn-ghost"><i class="ri-close-line text-lg"></i></button>
+            </form>
+        </div>
+
+        <div class="bg-base-200 rounded-box p-3 mt-4 space-y-1 text-sm">
+            <div><strong>Khách hàng:</strong> <span data-appointment-name></span> • <span data-appointment-phone></span></div>
+            <div><strong>Dịch vụ:</strong> <span data-appointment-service></span></div>
+            <div><strong>Thời gian:</strong> <span data-appointment-datetime></span></div>
+        </div>
+
+        <form method="post" class="space-y-3 mt-4" data-appointment-form>
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
+            <input type="hidden" name="id" data-appointment-id>
+            <input type="hidden" name="doctor_id" value="<?= isset($doctorProfile['id']) ? (int)$doctorProfile['id'] : '' ?>" data-appointment-doctor>
+            <label class="form-control">
+                <span class="label-text">Thời gian hẹn</span>
+                <input type="datetime-local" name="appointment_date" class="input input-bordered" data-appointment-date>
+            </label>
+            <label class="form-control">
+                <span class="label-text">Trạng thái</span>
+                <select name="status" class="select select-bordered" data-appointment-status>
+                    <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
+                        <option value="<?= $st ?>"><?= $st ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="form-control">
+                <span class="label-text">Ghi chú</span>
+                <textarea name="notes" class="textarea textarea-bordered" rows="3" data-appointment-notes></textarea>
+            </label>
+            <div class="modal-action">
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                <button type="button" class="btn" data-appointment-close>Đóng</button>
+            </div>
+        </form>
+    </div>
+</dialog>
 <?php endif; ?>
 
 <?php if ($user['role'] === 'doctor' && $doctorSchedules): ?>

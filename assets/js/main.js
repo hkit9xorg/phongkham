@@ -298,16 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.querySelectorAll('.appointment-update-form').forEach((form) => {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const payload = Object.fromEntries(new FormData(form).entries());
-            payload.id = form.dataset.id;
-            const res = await apiFetch('/api/appointment_status.php', { method: 'POST', body: JSON.stringify(payload) });
-            showModal(res.status === 'success' ? 'Đã cập nhật' : 'Lỗi', res.message);
-        });
-    });
-
     document.querySelectorAll('.appointment-reschedule-form').forEach((form) => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -342,6 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const serviceEl = appointmentModal.querySelector('[data-appointment-service]');
         const datetimeEl = appointmentModal.querySelector('[data-appointment-datetime]');
         const closeBtn = appointmentModal.querySelector('[data-appointment-close]');
+        const modalForm = appointmentModal.querySelector('[data-appointment-form]');
 
         if (closeBtn) {
             closeBtn.addEventListener('click', () => appointmentModal.close());
@@ -363,6 +354,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 appointmentModal.showModal();
             });
         });
+
+        if (modalForm) {
+            modalForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const payload = Object.fromEntries(new FormData(modalForm).entries());
+                payload.id = idInput?.value || '';
+                const res = await apiFetch('/api/appointment_status.php', { method: 'POST', body: JSON.stringify(payload) });
+                showModal(res.status === 'success' ? 'Đã cập nhật' : 'Lỗi', res.message);
+                if (res.status === 'success') {
+                    appointmentModal.close();
+                }
+            });
+        }
     }
 
     const moduleFormModal = document.getElementById('module-form-modal');
