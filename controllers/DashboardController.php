@@ -4,6 +4,7 @@ require_once __DIR__ . '/../models/Service.php';
 require_once __DIR__ . '/../models/Article.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Appointment.php';
+require_once __DIR__ . '/../models/AppointmentChange.php';
 require_once __DIR__ . '/../models/DoctorSchedule.php';
 require_once __DIR__ . '/../models/Patient.php';
 require_once __DIR__ . '/../models/Doctor.php';
@@ -20,6 +21,7 @@ $serviceModel = new Service($pdo);
 $articleModel = new Article($pdo);
 $userModel = new User($pdo);
 $appointmentModel = new Appointment($pdo);
+$appointmentChangeModel = new AppointmentChange($pdo);
 $scheduleModel = new DoctorSchedule($pdo);
 $patientModel = new Patient($pdo);
 $doctorModel = new Doctor($pdo);
@@ -43,6 +45,7 @@ $roleDistribution = $userModel->countByRole();
 $doctorStats = [];
 
 $appointments = [];
+$appointmentChanges = [];
 $customerAppointments = [];
 $appointmentHistory = [];
 $doctorSchedules = [];
@@ -69,6 +72,10 @@ if ($user['role'] === 'customer') {
     }
 } else {
     $appointments = $appointmentModel->all();
+}
+
+if (!empty($appointments)) {
+    $appointmentChanges = $appointmentChangeModel->latestForAppointments(array_column($appointments, 'id'));
 }
 
 $title = 'Dashboard';

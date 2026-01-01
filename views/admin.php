@@ -180,6 +180,7 @@
                             <th>Dịch vụ</th>
                             <th>Người phụ trách</th>
                             <th>Ngày giờ</th>
+                            <th>Thay đổi gần nhất</th>
                             <th>Trạng thái</th>
                             <th class="text-right">Thao tác</th>
                         </tr>
@@ -200,6 +201,18 @@
                                     <?php endif; ?>
                                 </td>
                                 <td><?= htmlspecialchars($item['appointment_date']) ?></td>
+                                <td>
+                                    <?php $change = $appointmentChanges[$item['id']] ?? null; ?>
+                                    <?php if ($change): ?>
+                                        <div class="text-xs space-y-1">
+                                            <div class="badge badge-info badge-outline gap-1"><i class="ri-notification-3-line"></i><span>Đã đổi</span></div>
+                                            <div>Từ <strong><?= htmlspecialchars($change['old_date']) ?></strong></div>
+                                            <div>Sang <strong><?= htmlspecialchars($change['new_date']) ?></strong></div>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="text-xs text-base-content/60">Không có</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= htmlspecialchars($item['status']) ?></td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">

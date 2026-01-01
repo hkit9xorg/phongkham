@@ -5,6 +5,7 @@ require_once __DIR__ . '/../helpers/Csrf.php';
 require_once __DIR__ . '/../helpers/Response.php';
 require_once __DIR__ . '/../helpers/Auth.php';
 require_once __DIR__ . '/../models/Appointment.php';
+require_once __DIR__ . '/../models/AppointmentChange.php';
 
 $user = Auth::user();
 if (!$user || $user['role'] !== 'customer') {
@@ -24,13 +25,16 @@ if (!Csrf::verify($token)) {
 $appointmentId = (int)($payload['id'] ?? 0);
 $newDate = trim($payload['appointment_date'] ?? '');
 $note = trim($payload['note'] ?? '');
+$previousDate = '';
 
 if ($appointmentId <= 0 || $newDate === '') {
     Response::json('error', 'Thiếu mã lịch hẹn hoặc thời gian mới.');
 }
 
 $appointmentModel = new Appointment($pdo);
+$appointmentChangeModel = new AppointmentChange($pdo);
 $appointment = $appointmentModel->findById($appointmentId);
+$previousDate = $appointment['appointment_date'] ?? '';
 
 if (!$appointment || (int)$appointment['customer_id'] !== (int)$user['id']) {
     Response::json('error', 'Bạn không thể chỉnh sửa lịch hẹn này.');
@@ -42,5 +46,9 @@ if (!in_array($appointment['status'], $allowedStatus, true)) {
 }
 
 $appointmentModel->requestReschedule($appointmentId, (int)$user['id'], $newDate, $note ?: null);
+
+if ($previousDate && $previousDate !== $newDate) {
+    $appointmentChangeModel->log($appointmentId, $previousDate, $newDate, (int)$user['id'], $user['role']);
+}
 
 Response::json('success', 'Đã gửi yêu cầu dời lịch.');

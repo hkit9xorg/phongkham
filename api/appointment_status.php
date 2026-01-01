@@ -6,6 +6,7 @@ require_once __DIR__ . '/../helpers/Response.php';
 require_once __DIR__ . '/../helpers/Auth.php';
 require_once __DIR__ . '/../models/Appointment.php';
 require_once __DIR__ . '/../models/Doctor.php';
+require_once __DIR__ . '/../models/AppointmentChange.php';
 
 $user = Auth::user();
 if (!$user) {
@@ -30,6 +31,7 @@ if ($id <= 0) {
 
 $appointmentModel = new Appointment($pdo);
 $doctorModel = new Doctor($pdo);
+$appointmentChangeModel = new AppointmentChange($pdo);
 $appointment = $appointmentModel->findById($id);
 if (!$appointment) {
     Response::json('error', 'Không tìm thấy lịch hẹn.');
@@ -39,6 +41,7 @@ $status = $payload['status'] ?? $appointment['status'];
 $notes = $payload['notes'] ?? $appointment['notes'];
 $appointmentDate = $payload['appointment_date'] ?? $appointment['appointment_date'];
 $doctorId = $payload['doctor_id'] ?? $appointment['doctor_id'];
+$previousDate = $appointment['appointment_date'];
 
 if ($user['role'] === 'doctor') {
     $doctorProfile = $doctorModel->findByUserId($user['id']);
@@ -57,5 +60,9 @@ $appointmentModel->updateStatus($id, [
     'appointment_date' => $appointmentDate,
     'notes' => $notes,
 ]);
+
+if ($appointmentDate && $previousDate !== $appointmentDate) {
+    $appointmentChangeModel->log($id, $previousDate, $appointmentDate, (int)$user['id'], $user['role']);
+}
 
 Response::json('success', 'Đã cập nhật lịch hẹn.');

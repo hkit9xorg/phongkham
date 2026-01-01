@@ -85,6 +85,18 @@ CREATE TABLE appointments (
     FOREIGN KEY (service_id) REFERENCES services(id)
 );
 
+CREATE TABLE appointment_changes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT NOT NULL,
+    old_date DATETIME NOT NULL,
+    new_date DATETIME NOT NULL,
+    changed_by INT NOT NULL,
+    changed_by_role ENUM('customer','doctor','admin') NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (appointment_id) REFERENCES appointments(id),
+    FOREIGN KEY (changed_by) REFERENCES users(id)
+);
+
 CREATE TABLE doctor_schedules (
     id INT AUTO_INCREMENT PRIMARY KEY,
     doctor_id INT NOT NULL,
@@ -131,6 +143,10 @@ INSERT INTO appointments (customer_id, doctor_id, service_id, full_name, phone, 
 VALUES
 (3, 1, 1, 'Khách hàng Minh', '0903000300', 'user@example.com', DATE_ADD(NOW(), INTERVAL 1 DAY), 'pending', 'standard', 'Đau nhức răng hàm trên'),
 (6, 1, 2, 'Khách vãng lai', '0909999999', 'guest@example.com', DATE_ADD(NOW(), INTERVAL 2 DAY), 'confirmed', 'standard', 'Muốn tẩy trắng răng');
+
+INSERT INTO appointment_changes (appointment_id, old_date, new_date, changed_by, changed_by_role)
+VALUES
+(1, DATE_ADD(NOW(), INTERVAL 2 DAY), DATE_ADD(NOW(), INTERVAL 1 DAY), 1, 'admin');
 
 INSERT INTO doctor_schedules (doctor_id, work_date, start_time, end_time, note)
 VALUES

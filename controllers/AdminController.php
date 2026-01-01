@@ -4,6 +4,7 @@ require_once __DIR__ . '/../models/Service.php';
 require_once __DIR__ . '/../models/Article.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Appointment.php';
+require_once __DIR__ . '/../models/AppointmentChange.php';
 require_once __DIR__ . '/../models/Doctor.php';
 require_once __DIR__ . '/../helpers/Csrf.php';
 require_once __DIR__ . '/../helpers/Auth.php';
@@ -19,6 +20,7 @@ $serviceModel = new Service($pdo);
 $articleModel = new Article($pdo);
 $userModel = new User($pdo);
 $appointmentModel = new Appointment($pdo);
+$appointmentChangeModel = new AppointmentChange($pdo);
 $doctorModel = new Doctor($pdo);
 
 $module = $_GET['module'] ?? 'services';
@@ -27,6 +29,7 @@ $keyword = trim($_GET['q'] ?? '');
 $status = $_GET['status'] ?? '';
 $perPage = 10;
 $currentRecord = null;
+$appointmentChanges = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['csrf_token'] ?? '';
@@ -166,12 +169,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($module === 'appointments') {
             $id = (int)($_POST['id'] ?? 0);
             if ($id > 0) {
-                $appointmentModel->updateStatus($id, [
+                $currentAppointment = $appointmentModel->findById($id);
+                $newData = [
                     'status' => $_POST['status'] ?? 'pending',
                     'doctor_id' => $_POST['doctor_id'] !== '' ? (int)$_POST['doctor_id'] : null,
                     'appointment_date' => $_POST['appointment_date'] ?? null,
                     'notes' => trim($_POST['notes'] ?? ''),
-                ]);
+                ];
+
+                $appointmentModel->updateStatus($id, $newData);
+
+                if ($currentAppointment && $newData['appointment_date'] && $currentAppointment['appointment_date'] !== $newData['appointment_date']) {
+                    $appointmentChangeModel->log(
+                        $id,
+                        $currentAppointment['appointment_date'],
+                        $newData['appointment_date'],
+                        (int)$user['id'],
+                        $user['role']
+                    );
+                }
                 $_SESSION['flash'] = 'Đã cập nhật lịch hẹn.';
             }
         }
@@ -225,6 +241,7 @@ if ($module === 'services') {
 $totalPages = max(1, (int)ceil($total / $perPage));
 $doctorUsers = $userModel->listDoctors();
 $doctorProfiles = $doctorModel->allActive();
+$appointmentChanges = $module === 'appointments' ? $appointmentChangeModel->latestForAppointments(array_column($items, 'id')) : [];
 
 $title = 'Quản trị chi tiết';
 ob_start();
