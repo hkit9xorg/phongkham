@@ -1,0 +1,21 @@
+@startuml
+actor Customer
+participant "Frontend" as FE
+participant "API" as API
+participant "Database" as DB
+participant "Admin/Bác sĩ" as Staff
+
+Customer -> FE: Gửi yêu cầu đổi lịch (ngày/giờ mới, lý do)
+FE -> API: POST /appointment/reschedule
+API -> DB: Lưu yêu cầu trạng thái "chờ duyệt"
+API --> FE: Trả JSON kết quả
+Staff -> FE: Đăng nhập và mở danh sách yêu cầu
+FE -> API: GET /appointment/pending-requests
+API -> DB: Truy vấn yêu cầu
+API --> FE: JSON danh sách
+Staff -> FE: Chọn yêu cầu, chấp nhận hoặc từ chối
+FE -> API: POST /appointment/approve-reschedule
+API -> DB: Cập nhật lịch hẹn & thông báo
+API --> FE: Kết quả thành công
+FE --> Customer: Hiển thị trạng thái mới của lịch hẹn
+@enduml

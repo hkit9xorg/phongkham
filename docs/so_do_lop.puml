@@ -1,0 +1,63 @@
+@startuml
+class User {
+  +id: int
+  +full_name: string
+  +email: string
+  +phone: string
+  +role: enum
+  +is_active: bool
+}
+
+class PatientProfile {
+  +id: int
+  +user_id: int
+  +dob: date
+  +gender: enum
+  +address: string
+  +medical_history: text
+  +allergies: text
+}
+
+class Service {
+  +id: int
+  +name: string
+  +description: text
+  +price: decimal
+  +is_active: bool
+}
+
+class Appointment {
+  +id: int
+  +user_id: int
+  +doctor_id: int
+  +service_id: int
+  +status: enum
+  +scheduled_at: datetime
+  +type: enum
+  +note: text
+}
+
+class Article {
+  +id: int
+  +title: string
+  +content: text
+  +author_id: int
+  +is_published: bool
+}
+
+class DoctorSchedule {
+  +id: int
+  +doctor_id: int
+  +work_date: date
+  +time_slot: string
+  +status: enum
+}
+
+User "1" -- "0..1" PatientProfile : sở hữu
+User "1" -- "*" Appointment : tạo
+User "1" -- "*" Article : viết
+User "1" -- "*" DoctorSchedule : được xếp
+Service "1" -- "*" Appointment : được chọn
+User "1" -- "*" Appointment : phụ trách #line:black
+Appointment "0..1" -- "0..1" Appointment : "liên kết tái khám"
+@enduml

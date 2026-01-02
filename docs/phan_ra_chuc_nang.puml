@@ -1,0 +1,24 @@
+@startmindmap
+* Hệ thống quản lý phòng khám
+** Quản lý người dùng
+*** Đăng ký/Đăng nhập khách hàng
+*** Phân quyền & bảo mật
+*** Quản lý tài khoản nội bộ
+** Quản lý dịch vụ & nội dung
+*** Danh mục dịch vụ nha khoa
+*** Bài viết tin tức/tư vấn
+** Quản lý lịch hẹn
+*** Đặt lịch công khai/đăng nhập
+*** Xác nhận & phân công bác sĩ
+*** Yêu cầu đổi/hủy lịch
+*** Tái khám nhanh
+** Quản lý hồ sơ
+*** Hồ sơ bệnh nhân
+*** Ghi chú khám & lịch sử điều trị
+** Lịch làm việc bác sĩ
+*** Thiết lập ca làm việc
+*** Kiểm tra slot trống khi đặt
+** Báo cáo thống kê
+*** Dashboard số lượng
+*** Biểu đồ lịch hẹn & dịch vụ
+@endmindmap

@@ -1,0 +1,20 @@
+@startuml
+left to right direction
+actor Doctor as D
+rectangle "Chức năng Bác sĩ" {
+  usecase UC_Login as "Đăng nhập"
+  usecase UC_ViewSchedule as "Xem lịch làm việc"
+  usecase UC_ViewAssigned as "Xem lịch hẹn được phân công"
+  usecase UC_AddNotes as "Cập nhật ghi chú khám"
+  usecase UC_CreateRevisit as "Tạo lịch tái khám nhanh"
+  usecase UC_RescheduleRevisit as "Đổi lịch tái khám"
+  usecase UC_ViewRecord as "Tham khảo hồ sơ bệnh nhân"
+}
+D --> UC_Login
+D --> UC_ViewSchedule
+D --> UC_ViewAssigned
+D --> UC_AddNotes
+D --> UC_CreateRevisit
+D --> UC_RescheduleRevisit
+D --> UC_ViewRecord
+@enduml
