@@ -1,0 +1,22 @@
+@startuml
+left to right direction
+actor Admin as A
+rectangle "Chức năng Quản trị viên" {
+  usecase UC_User as "Quản lý tài khoản"
+  usecase UC_Articles as "Quản lý bài viết"
+  usecase UC_Services as "Quản lý dịch vụ"
+  usecase UC_Patients as "Quản lý hồ sơ bệnh nhân"
+  usecase UC_Appointments as "Quản lý lịch hẹn"
+  usecase UC_WorkingHours as "Quản lý lịch làm việc bác sĩ"
+  usecase UC_Dashboard as "Dashboard thống kê"
+  usecase UC_ReviewRequests as "Duyệt yêu cầu đổi/hủy"
+}
+A --> UC_User
+A --> UC_Articles
+A --> UC_Services
+A --> UC_Patients
+A --> UC_Appointments
+A --> UC_WorkingHours
+A --> UC_Dashboard
+A --> UC_ReviewRequests
+@enduml

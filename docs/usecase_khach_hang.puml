@@ -1,0 +1,22 @@
+@startuml
+left to right direction
+actor Customer as C
+rectangle "Chức năng Khách hàng" {
+  usecase UC_Register as "Đăng ký tài khoản"
+  usecase UC_Login as "Đăng nhập & phân quyền"
+  usecase UC_Book as "Đặt lịch hẹn"
+  usecase UC_ViewAppointments as "Xem lịch hẹn của mình"
+  usecase UC_RequestReschedule as "Gửi yêu cầu đổi lịch"
+  usecase UC_RequestCancel as "Gửi yêu cầu hủy lịch"
+  usecase UC_ViewProfile as "Xem hồ sơ cá nhân & lịch sử"
+  usecase UC_ReadContent as "Xem bài viết và dịch vụ"
+}
+C --> UC_Register
+C --> UC_Login
+C --> UC_Book
+C --> UC_ViewAppointments
+C --> UC_RequestReschedule
+C --> UC_RequestCancel
+C --> UC_ViewProfile
+C --> UC_ReadContent
+@enduml

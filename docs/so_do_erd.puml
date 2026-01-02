@@ -1,0 +1,78 @@
+@startuml
+!define ERD_LEGEND
+entity "users" as users {
+  *id : INT <<PK>>
+  --
+  email : VARCHAR(150)
+  phone : VARCHAR(20)
+  password_hash : VARCHAR(255)
+  role : ENUM(admin,doctor,customer)
+  is_active : TINYINT
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+entity "patients" as patients {
+  *id : INT <<PK>>
+  user_id : INT <<FK>>
+  dob : DATE
+  gender : ENUM(male,female,other)
+  address : VARCHAR(255)
+  medical_history : TEXT
+  allergies : TEXT
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+entity "services" as services {
+  *id : INT <<PK>>
+  name : VARCHAR(255)
+  description : TEXT
+  price : DECIMAL(12,2)
+  is_active : TINYINT
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+entity "articles" as articles {
+  *id : INT <<PK>>
+  title : VARCHAR(255)
+  content : TEXT
+  author_id : INT <<FK>>
+  is_published : TINYINT
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+entity "appointments" as appointments {
+  *id : INT <<PK>>
+  user_id : INT <<FK>>
+  doctor_id : INT <<FK>>
+  service_id : INT <<FK>>
+  status : ENUM(pending,confirmed,cancelled,done,no_show,rescheduled)
+  type : ENUM(normal,revisit)
+  scheduled_at : DATETIME
+  note : TEXT
+  revisit_from : INT <<FK>>
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+entity "doctor_schedules" as doctor_schedules {
+  *id : INT <<PK>>
+  doctor_id : INT <<FK>>
+  work_date : DATE
+  time_slot : VARCHAR(50)
+  status : ENUM(available,blocked)
+  created_at : DATETIME
+  updated_at : DATETIME
+}
+
+users ||--|| patients : "1-1" 
+users ||--o{ appointments : "khách đặt"
+users ||--o{ appointments : "bác sĩ phụ trách"
+services ||--o{ appointments
+articles }o--|| users : "tác giả"
+doctor_schedules }o--|| users : "lịch bác sĩ"
+appointments ||--o{ appointments : "tái khám từ"
+@enduml
