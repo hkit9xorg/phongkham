@@ -38,7 +38,7 @@
             <h1 class="text-3xl font-bold leading-tight"><?= htmlspecialchars($article['title']) ?></h1>
 
             <div class="prose max-w-none">
-                <?= nl2br(htmlspecialchars($article['content'])) ?>
+                <?= $article['content'] ?>
             </div>
 
             <div class="pt-4 border-t">
