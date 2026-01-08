@@ -375,7 +375,7 @@ if (empty($teamMembers)) {
                 <div class="space-y-1">
                     <p class="font-semibold">Hotline tư vấn</p>
                     <p class="text-sm text-base-content/70">Gọi nhanh để được ưu tiên khung giờ & hỗ trợ dịch vụ phù hợp.</p>
-                    <a class="link link-primary font-semibold" href="tel:0900000000">0900 000 000</a>
+                    <a class="link link-primary font-semibold" href="tel:0358993264">0358 993 264</a>
                 </div>
             </div>
 
@@ -397,7 +397,7 @@ if (empty($teamMembers)) {
                 <div class="space-y-1">
                     <p class="font-semibold">Địa chỉ phòng khám</p>
                     <p class="text-sm text-base-content/70">123 Lê Lợi, Quận 1, TP.HCM</p>
-                    <a class="link link-primary text-sm" href="#map">Xem bản đồ</a>
+                    <a class="link link-primary text-sm" href="https://maps.app.goo.gl/KLy5njJnuumLGkVT6">Xem bản đồ</a>
                 </div>
             </div>
 

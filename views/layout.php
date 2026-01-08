@@ -188,7 +188,7 @@ $sectionBase = $isHomePage ? '#' : $baseUrl . '/#';
                 <h3 class="font-semibold mb-3">Liên hệ</h3>
                 <ul class="space-y-2 text-sm text-base-content/80">
                     <li class="flex items-start gap-2"><i class="ri-map-pin-2-line mt-1"></i><span>123 Lê Lợi, Quận 1, TP.HCM</span></li>
-                    <li class="flex items-start gap-2"><i class="ri-phone-fill mt-1"></i><a class="link" href="tel:19001234">1900 1234</a></li>
+                    <li class="flex items-start gap-2"><i class="ri-phone-fill mt-1"></i><a class="link" href="tel:0358993264">0358 993 264</a></li>
                     <li class="flex items-start gap-2"><i class="ri-mail-line mt-1"></i><a class="link" href="mailto:hello@smilecare.vn">hello@smilecare.vn</a></li>
                     <li class="flex items-start gap-2"><i class="ri-time-line mt-1"></i><span>08:00 - 20:00 (T2 - CN)</span></li>
                 </ul>
@@ -197,7 +197,7 @@ $sectionBase = $isHomePage ? '#' : $baseUrl . '/#';
                 <div class="space-y-2">
                     <h3 class="font-semibold">Địa chỉ trên bản đồ</h3>
                     <div class="rounded-xl overflow-hidden shadow">
-                        <iframe class="w-full h-48" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.5092989647413!2d106.7009850767148!3d10.772215059271492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3fa6b0f3a7%3A0x22e7b83c89d12b21!2zMjMgTMaw4budbmcgVsSDbiBBbiwgU8OibiBUaOG7nSBIw6AsIFF14bqtbiAxLCBUUC4gSMOyIENow60gTWluaA!5e0!3m2!1svi!2svi!4v1716715700000!5m2!1svi!2svi" allowfullscreen="" loading="lazy"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4682431508922!2d106.67493139678957!3d10.775404200000006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3504c5823171ad1%3A0x1370a394c750bab6!2zTmhhIEtob2EgUXXhu5FjIFThur8gU8OgaSBHw7Ju!5e0!3m2!1svi!2svi!4v1767877862316!5m2!1svi!2svi" allowfullscreen="" loading="lazy"></iframe>
                     </div>
                 </div>
             <?php endif; ?>

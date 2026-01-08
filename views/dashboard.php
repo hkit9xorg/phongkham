@@ -155,7 +155,7 @@ $appointmentTotal = max(1, array_sum($appointmentStatusCounts ?? []));
                         <span class="font-semibold"><?= $count ?> lượt (<?= $percent ?>%)</span>
                     </div>
                     <div class="h-3 rounded-full bg-base-200 overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-primary to-secondary" style="width: <?= $percent ?>%"></div>
+                        <div class="h-full bg-primary" style="width: <?= $percent ?>%"></div>
                     </div>
                 </div>
             <?php endforeach; ?>

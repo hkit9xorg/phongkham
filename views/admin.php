@@ -14,8 +14,29 @@
         <h1 class="text-3xl font-bold">Quản trị chi tiết</h1>
         <div class="breadcrumbs">
             <ul class="text-sm">
-                <li><a href="/index.php?page=dashboard">Dashboard</a></li>
-                <li><?= htmlspecialchars($module) ?></li>
+                <li><a href="/index.php?page=dashboard">Trang chủ</a></li>
+                <li><?php
+                    switch ($module) {
+                        case 'services':
+                            echo 'Dịch vụ';
+                            break;
+                        case 'articles':
+                            echo 'Bài viết';
+                            break;
+                        case 'doctors':
+                            echo 'Bác sĩ';
+                            break;
+                        case 'appointments':
+                            echo 'Lịch hẹn';
+                            break;
+                        case 'users':
+                            echo 'Người dùng';
+                            break;
+                        default:
+                            echo 'Không xác định';
+                            break;
+                    }
+                ?></li>
             </ul>
         </div>
     </div>
@@ -33,12 +54,12 @@
         <input type="hidden" name="page" value="admin">
         <input type="hidden" name="module" value="<?= htmlspecialchars($module) ?>">
         <label class="form-control w-full md:w-1/3">
-            <span class="label-text">Từ khóa</span>
+            <span class="label-text mb-3">Từ khóa</span>
             <input class="input input-bordered" name="q" value="<?= htmlspecialchars($keyword) ?>" placeholder="Tìm kiếm tiêu đề, tên hoặc SĐT">
         </label>
         <?php if ($module === 'appointments'): ?>
             <label class="form-control w-full md:w-1/4">
-                <span class="label-text">Trạng thái</span>
+                <span class="label-text mb-3">Trạng thái</span>
                 <select name="status" class="select select-bordered">
                     <option value="">Tất cả</option>
                     <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
@@ -62,7 +83,7 @@
                 <?php if (in_array($module, ['services', 'articles', 'doctors'], true)): ?>
                     <button type="button" class="btn btn-primary btn-sm" data-open-form>+ Thêm <?= $moduleLabel ?></button>
                 <?php endif; ?>
-                <a class="btn btn-ghost btn-sm" href="/index.php?page=admin&module=<?= $module ?>">Tải lại</a>
+                <a class="btn bg-primary text-white btn-sm" href="/index.php?page=admin&module=<?= $module ?>"><i class="ri-refresh-line mr-1"></i>Tải lại</a>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -104,7 +125,7 @@
                                     <?php endif; ?>
                                 </td>
                                 <td><?= htmlspecialchars($item['title']) ?></td>
-                                <td><?= htmlspecialchars($item['status']) ?></td>
+                                <td><?= htmlspecialchars($item['status']) === 'published' ? 'Hiển thị' : 'Nháp' ?></td>
                                 <td><?= htmlspecialchars($item['author_name'] ?? '') ?></td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">
@@ -198,7 +219,7 @@
                                 <td><?= htmlspecialchars($item['service_name'] ?? 'Tư vấn') ?></td>
                                 <td>
                                     <?php if (!empty($item['doctor_name'])): ?>
-                                        <div class="badge badge-outline badge-primary gap-1">
+                                        <div class="">
                                             <i class="ri-user-heart-line"></i>
                                             <span><?= htmlspecialchars($item['doctor_name']) ?></span>
                                         </div>
@@ -211,15 +232,43 @@
                                     <?php $change = $appointmentChanges[$item['id']] ?? null; ?>
                                     <?php if ($change): ?>
                                         <div class="text-xs space-y-1">
-                                            <div class="badge badge-info badge-outline gap-1"><i class="ri-notification-3-line"></i><span>Đã đổi</span></div>
-                                            <div>Từ <strong><?= htmlspecialchars($change['old_date']) ?></strong></div>
-                                            <div>Sang <strong><?= htmlspecialchars($change['new_date']) ?></strong></div>
+                                            <div><strong><?= htmlspecialchars($change['new_date']) ?></strong></div>
+                                            <div class="text-gray-500"><i><?= htmlspecialchars($change['old_date']) ?></i></div>
                                         </div>
                                     <?php else: ?>
                                         <span class="text-xs text-base-content/60">Không có</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= htmlspecialchars($item['status']) ?></td>
+                                <td>
+                                    <?php
+                                        switch ($item['status']) {
+                                            case 'completed':
+                                                echo '<span class="badge badge-success badge-outline">Hoàn thành</span>';
+                                                break;
+                                            case 'rescheduled':
+                                                echo '<span class="badge badge-warning badge-outline">Hẹn lại</span>';
+                                                break;
+                                            case 'cancelled':
+                                                echo '<span class="badge badge-error badge-outline">Đã hủy</span>';
+                                                break;
+                                            case 'no_show':
+                                                echo '<span class="badge badge-error badge-outline">Không đến</span>';
+                                                break;
+                                            case 'revisit':
+                                                echo '<span class="badge badge-success badge-outline">Đã tái khám</span>';
+                                                break;
+                                            case 'confirmed':
+                                                echo '<span class="badge badge-success badge-outline">Đã xác nhận</span>';
+                                                break;
+                                            case 'pending':
+                                                echo '<span class="badge badge-info badge-outline">Đang chờ</span>';
+                                                break;
+                                            default:
+                                                echo '<span class="badge badge-info badge-outline">Chưa xác định</span>';
+                                                break;
+                                        }
+                                    ?>
+                                </td>
                                 <td class="text-right">
                                     <div class="flex gap-2 justify-end">
                                         <button
@@ -290,25 +339,25 @@
 
             <?php if ($module === 'services'): ?>
                 <label class="form-control">
-                    <span class="label-text">Tên dịch vụ</span>
+                    <span class="label-text mb-3">Tên dịch vụ</span>
                     <input name="name" class="input input-bordered" required value="<?= htmlspecialchars($currentRecord['name'] ?? '') ?>">
                 </label>
                 <label class="form-control">
-                    <span class="label-text">Giá tham khảo</span>
+                    <span class="label-text mb-3">Giá tham khảo</span>
                     <input type="number" step="1000" name="price" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['price'] ?? '') ?>">
                 </label>
                 <label class="form-control">
-                    <span class="label-text">Mô tả</span>
+                    <span class="label-text mb-3">Mô tả</span>
                     <textarea name="description" class="textarea textarea-bordered" rows="3"><?= htmlspecialchars($currentRecord['description'] ?? '') ?></textarea>
                 </label>
                 <label class="form-control">
-                    <span class="label-text">Ảnh đại diện</span>
+                    <span class="label-text mb-3">Ảnh đại diện</span>
                     <input type="file" name="thumbnail" accept="image/*" class="file-input file-input-bordered" data-file-input data-preview-target="#service-thumb-preview">
-                    <p class="text-xs text-base-content/60">Hỗ trợ PNG, JPG, GIF, WebP (tối đa 2MB)</p>
+                    <p class="text-xs text-base-content/60 mt-3">Hỗ trợ PNG, JPG, GIF, WebP (tối đa 2MB)</p>
                     <img id="service-thumb-preview" data-preview-image class="mt-2 rounded-lg h-28 w-full object-cover <?= empty($currentRecord['thumbnail']) ? 'hidden' : '' ?>" src="<?= htmlspecialchars($currentRecord['thumbnail'] ?? '') ?>" alt="Xem trước ảnh dịch vụ">
                 </label>
                 <label class="form-control">
-                    <span class="label-text">Trạng thái hiển thị</span>
+                    <span class="label-text mb-3">Trạng thái hiển thị</span>
                     <select name="is_active" class="select select-bordered">
                         <option value="1" <?= ($currentRecord['is_active'] ?? 1) == 1 ? 'selected' : '' ?>>Hiển thị</option>
                         <option value="0" <?= isset($currentRecord['is_active']) && (int)$currentRecord['is_active'] === 0 ? 'selected' : '' ?>>Ẩn</option>
@@ -316,22 +365,22 @@
                 </label>
             <?php elseif ($module === 'articles'): ?>
                 <label class="form-control">
-                    <span class="label-text">Tiêu đề</span>
+                    <span class="label-text mb-3">Tiêu đề</span>
                     <input name="title" class="input input-bordered" required value="<?= htmlspecialchars($currentRecord['title'] ?? '') ?>">
                 </label>
                 <label class="form-control">
-                    <span class="label-text">Chuyên mục</span>
+                    <span class="label-text mb-3">Chuyên mục</span>
                     <input name="category" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['category'] ?? 'news') ?>">
                 </label>
                 <label class="form-control">
-                    <span class="label-text">Ảnh thumbnail</span>
+                    <span class="label-text mb-3">Ảnh thumbnail</span>
                     <input type="file" name="thumbnail" accept="image/*" class="file-input file-input-bordered" data-file-input data-preview-target="#article-thumb-preview">
-                    <p class="text-xs text-base-content/60">PNG, JPG, GIF, WebP (tối đa 2MB)</p>
+                    <p class="text-xs text-base-content/60 mt-3">PNG, JPG, GIF, WebP (tối đa 2MB)</p>
                     <img id="article-thumb-preview" data-preview-image class="mt-2 rounded-lg h-28 w-full object-cover <?= empty($currentRecord['thumbnail']) ? 'hidden' : '' ?>" src="<?= htmlspecialchars($currentRecord['thumbnail'] ?? '') ?>" alt="Xem trước thumbnail">
                 </label>
                 <div class="form-control" data-wysiwyg>
                     <label class="label flex items-center justify-between">
-                        <span class="label-text">Nội dung</span>
+                        <span class="label-text mb-3">Nội dung</span>
                         <span class="text-xs text-base-content/60">Hỗ trợ định dạng cơ bản</span>
                     </label>
                     <div class="wysiwyg-toolbar mb-2">
@@ -346,7 +395,7 @@
                     <textarea name="content" class="textarea textarea-bordered hidden" rows="4" required><?= htmlspecialchars($currentRecord['content'] ?? '') ?></textarea>
                 </div>
                 <label class="form-control">
-                    <span class="label-text">Trạng thái</span>
+                    <span class="label-text mb-3">Trạng thái</span>
                     <select name="status" class="select select-bordered">
                         <option value="draft" <?= ($currentRecord['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Nháp</option>
                         <option value="published" <?= ($currentRecord['status'] ?? '') === 'published' ? 'selected' : '' ?>>Đăng ngay</option>
@@ -354,7 +403,7 @@
                 </label>
             <?php elseif ($module === 'doctors'): ?>
                 <label class="form-control">
-                    <span class="label-text">Tài khoản bác sĩ (tùy chọn)</span>
+                    <span class="label-text mb-3">Tài khoản bác sĩ (tùy chọn)</span>
                     <select name="user_id" class="select select-bordered">
                         <option value="">Chưa liên kết</option>
                         <?php foreach ($doctorUsers as $doctorUser): ?>
@@ -366,41 +415,45 @@
                     <p class="text-xs text-base-content/60">Chọn tài khoản có vai trò bác sĩ để đồng bộ thông tin.</p>
                 </label>
                 <label class="form-control">
-                    <span class="label-text">Họ tên</span>
+                    <span class="label-text mb-3">Họ tên</span>
                     <input name="full_name" class="input input-bordered" required value="<?= htmlspecialchars($currentRecord['full_name'] ?? '') ?>">
                 </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <label class="form-control">
+                        <span class="label-text mb-3">Học hàm/Học vị</span>
+                        <input name="academic_title" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['academic_title'] ?? '') ?>">
+                    </label>
+                    <label class="form-control">
+                        <span class="label-text mb-3">Chuyên ngành</span>
+                        <input name="specialty" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['specialty'] ?? '') ?>">
+                    </label>
+                </div>
                 <label class="form-control">
-                    <span class="label-text">Học hàm/Học vị</span>
-                    <input name="academic_title" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['academic_title'] ?? '') ?>">
-                </label>
-                <label class="form-control">
-                    <span class="label-text">Chuyên ngành</span>
-                    <input name="specialty" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['specialty'] ?? '') ?>">
-                </label>
-                <label class="form-control">
-                    <span class="label-text">Ảnh chân dung (tải từ máy)</span>
+                    <span class="label-text mb-3">Ảnh chân dung (tải từ máy)</span>
                     <input type="file" name="avatar_file" accept="image/*" class="file-input file-input-bordered" data-file-input data-preview-target="#doctor-avatar-preview">
-                    <p class="text-xs text-base-content/60">PNG, JPG, GIF, WebP (tối đa 2MB)</p>
+                    <p class="text-xs text-base-content/60 mt-3">PNG, JPG, GIF, WebP (tối đa 2MB)</p>
                     <img id="doctor-avatar-preview" data-preview-image class="mt-2 rounded-full h-24 w-24 object-cover <?= empty($currentRecord['avatar_url']) ? 'hidden' : '' ?>" src="<?= htmlspecialchars($currentRecord['avatar_url'] ?? '') ?>" alt="Xem trước ảnh bác sĩ">
                 </label>
                 <label class="form-control">
-                    <span class="label-text">Link ảnh chân dung</span>
+                    <span class="label-text mb-3">Link ảnh chân dung</span>
                     <input name="avatar_url" class="input input-bordered" placeholder="https://..." value="<?= htmlspecialchars($currentRecord['avatar_url'] ?? '') ?>">
                 </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <label class="form-control">
+                        <span class="label-text mb-3">Ngày vào</span>
+                        <input type="date" name="joined_at" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['joined_at'] ?? '') ?>">
+                    </label>
+                    <label class="form-control">
+                        <span class="label-text mb-3">Trạng thái hiển thị</span>
+                        <select name="is_active" class="select select-bordered">
+                            <option value="1" <?= ($currentRecord['is_active'] ?? 1) == 1 ? 'selected' : '' ?>>Hiển thị</option>
+                            <option value="0" <?= isset($currentRecord['is_active']) && (int)$currentRecord['is_active'] === 0 ? 'selected' : '' ?>>Ẩn</option>
+                        </select>
+                    </label>
+                </div>
                 <label class="form-control">
-                    <span class="label-text">Triết lý điều trị</span>
+                    <span class="label-text mb-3">Triết lý điều trị</span>
                     <textarea name="philosophy" class="textarea textarea-bordered" rows="3" placeholder="Tập trung vào trải nghiệm nhẹ nhàng..."><?= htmlspecialchars($currentRecord['philosophy'] ?? '') ?></textarea>
-                </label>
-                <label class="form-control">
-                    <span class="label-text">Ngày vào</span>
-                    <input type="date" name="joined_at" class="input input-bordered" value="<?= htmlspecialchars($currentRecord['joined_at'] ?? '') ?>">
-                </label>
-                <label class="form-control">
-                    <span class="label-text">Trạng thái hiển thị</span>
-                    <select name="is_active" class="select select-bordered">
-                        <option value="1" <?= ($currentRecord['is_active'] ?? 1) == 1 ? 'selected' : '' ?>>Hiển thị</option>
-                        <option value="0" <?= isset($currentRecord['is_active']) && (int)$currentRecord['is_active'] === 0 ? 'selected' : '' ?>>Ẩn</option>
-                    </select>
                 </label>
             <?php else: ?>
                 <?php if ($currentRecord): ?>
@@ -409,7 +462,7 @@
                         <p><strong>Số điện thoại:</strong> <?= htmlspecialchars($currentRecord['phone'] ?? '') ?></p>
                     </div>
                     <label class="form-control">
-                        <span class="label-text">Vai trò</span>
+                        <span class="label-text mb-3">Vai trò</span>
                         <select name="role" class="select select-bordered" required>
                             <?php foreach (['customer' => 'Khách hàng', 'doctor' => 'Bác sĩ', 'admin' => 'Quản trị'] as $role => $label): ?>
                                 <option value="<?= $role ?>" <?= ($currentRecord['role'] ?? '') === $role ? 'selected' : '' ?>><?= $label ?></option>
@@ -454,11 +507,11 @@
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(Csrf::token()) ?>">
             <input type="hidden" name="id" data-appointment-id>
             <label class="form-control">
-                <span class="label-text">Thời gian hẹn</span>
+                <span class="label-text mb-3">Thời gian hẹn</span>
                 <input type="datetime-local" name="appointment_date" class="input input-bordered" data-appointment-date>
             </label>
             <label class="form-control">
-                <span class="label-text">Trạng thái</span>
+                <span class="label-text mb-3">Trạng thái</span>
                 <select name="status" class="select select-bordered" data-appointment-status>
                     <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
                         <option value="<?= $st ?>"><?= $st ?></option>
@@ -466,7 +519,7 @@
                 </select>
             </label>
             <label class="form-control">
-                <span class="label-text">Bác sĩ phụ trách</span>
+                <span class="label-text mb-3">Bác sĩ phụ trách</span>
                 <select name="doctor_id" class="select select-bordered" data-appointment-doctor>
                     <option value="">Chưa gán</option>
                     <?php foreach ($doctorProfiles as $doc): ?>
@@ -475,7 +528,7 @@
                 </select>
             </label>
             <label class="form-control">
-                <span class="label-text">Ghi chú</span>
+                <span class="label-text mb-3">Ghi chú</span>
                 <textarea name="notes" class="textarea textarea-bordered" rows="3" data-appointment-notes></textarea>
             </label>
             <div class="modal-action">

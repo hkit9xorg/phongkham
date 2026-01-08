@@ -35,7 +35,7 @@
     </div>
     <div class="relative order-first lg:order-last">
         <img
-            src="https://images.unsplash.com/photo-1631815589966-6ec501f075d9?auto=format&fit=crop&w=900&q=80"
+            src="https://plus.unsplash.com/premium_photo-1672922646500-f9b9ae231431?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             class="rounded-3xl shadow-2xl w-full object-cover h-full"
             alt="Không gian phòng khám SmileCare">
         <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-base-100 shadow-xl p-4 rounded-2xl flex items-center gap-3 w-[90%]">

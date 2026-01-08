@@ -1,5 +1,7 @@
-:root, [data-theme] {
-    --p: 55% 0.2 250; /* Softer Blue */
+:root,
+[data-theme] {
+    --p: 55% 0.2 250;
+    /* Softer Blue */
     --pc: 96% 0 0;
 }
 
@@ -7,7 +9,8 @@ body {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-.table td, .table th {
+.table td,
+.table th {
     white-space: nowrap;
 }
 
@@ -27,8 +30,13 @@ body {
 }
 
 @keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .auto-slider:not([data-visible]) [data-slide] {
@@ -77,8 +85,15 @@ body {
 }
 
 @keyframes bounce-subtle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
 }
 
 .animate-fade-out {
@@ -86,8 +101,14 @@ body {
 }
 
 @keyframes fade-out {
-    from { opacity: 1; }
-    to { opacity: 0; transform: translateY(-6px); }
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
 }
 
 .wysiwyg-toolbar {
@@ -98,7 +119,7 @@ body {
 
 .wysiwyg-editor {
     min-height: 220px;
-    border: 1px solid hsl(var(--b3));
+    border: 1px solid var(--fallback-bc, oklch(var(--bc)/.2));
     border-radius: 0.75rem;
     padding: 0.75rem;
     background: hsl(var(--b1));

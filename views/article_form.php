@@ -47,7 +47,7 @@
             <div class="form-control md:col-span-2">
                 <label class="label"><span class="label-text">Ảnh thumbnail</span></label>
                 <input type="file" name="thumbnail" accept="image/*" class="file-input file-input-bordered">
-                <p class="text-xs text-base-content/60">Hỗ trợ PNG, JPG, GIF, WebP (tối đa 2MB)</p>
+                <p class="text-xs text-base-content/60 mt-3">Hỗ trợ PNG, JPG, GIF, WebP (tối đa 2MB)</p>
                 <img data-preview-thumb class="mt-2 rounded-lg hidden h-32 w-full object-cover" alt="Xem trước ảnh" />
             </div>
             <div class="md:col-span-2 flex gap-3">
