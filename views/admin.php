@@ -6,6 +6,15 @@
         'appointments' => 'lịch hẹn',
         'users' => 'người dùng',
     ];
+    $appointmentStatusLabels = [
+        'pending' => 'Đang chờ',
+        'confirmed' => 'Đã xác nhận',
+        'rescheduled' => 'Hẹn lại',
+        'cancelled' => 'Đã hủy',
+        'completed' => 'Hoàn thành',
+        'no_show' => 'Không đến',
+        'revisit' => 'Đã tái khám',
+    ];
     $moduleLabel = $moduleLabels[$module] ?? 'mục';
 ?>
 
@@ -62,8 +71,8 @@
                 <span class="label-text mb-3">Trạng thái</span>
                 <select name="status" class="select select-bordered">
                     <option value="">Tất cả</option>
-                    <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
-                        <option value="<?= $st ?>" <?= $status === $st ? 'selected' : '' ?>><?= $st ?></option>
+                    <?php foreach ($appointmentStatusLabels as $st => $label): ?>
+                        <option value="<?= $st ?>" <?= $status === $st ? 'selected' : '' ?>><?= $label ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
@@ -144,10 +153,18 @@
                 </table>
             <?php elseif ($module === 'doctors'): ?>
                 <table class="table">
-                    <thead><tr><th>Họ tên</th><th>Học hàm/học vị</th><th>Chuyên ngành</th><th>Ngày vào</th><th>Hiển thị</th><th class="text-right">Thao tác</th></tr></thead>
+                    <thead><tr><th>Ảnh</th><th>Họ tên</th><th>Học hàm/học vị</th><th>Chuyên ngành</th><th>Ngày vào</th><th>Hiển thị</th><th class="text-right">Thao tác</th></tr></thead>
                     <tbody>
                         <?php foreach ($items as $item): ?>
                             <tr>
+                                <?php $avatarUrl = $item['avatar_url'] ?: 'https://api.dicebear.com/7.x/identicon/svg?seed=' . urlencode($item['full_name'] ?? 'doctor'); ?>
+                                <td>
+                                    <div class="avatar">
+                                        <div class="w-12 rounded-full">
+                                            <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="<?= htmlspecialchars($item['full_name']) ?>">
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="font-semibold"><?= htmlspecialchars($item['full_name']) ?></td>
                                 <td><?= htmlspecialchars($item['academic_title'] ?? 'Đang cập nhật') ?></td>
                                 <td><?= htmlspecialchars($item['specialty'] ?? 'Đang cập nhật') ?></td>
@@ -513,8 +530,8 @@
             <label class="form-control">
                 <span class="label-text mb-3">Trạng thái</span>
                 <select name="status" class="select select-bordered" data-appointment-status>
-                    <?php foreach (['pending','confirmed','rescheduled','cancelled','completed','no_show','revisit'] as $st): ?>
-                        <option value="<?= $st ?>"><?= $st ?></option>
+                    <?php foreach ($appointmentStatusLabels as $st => $label): ?>
+                        <option value="<?= $st ?>"><?= $label ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
