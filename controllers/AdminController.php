@@ -128,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = (int)($_POST['id'] ?? 0);
             $existing = $id > 0 ? $doctorModel->findById($id) : null;
             $avatarPath = $existing['avatar_url'] ?? '';
+            $uploadedAvatarPath = null;
 
             if (!empty($_FILES['avatar_file'])) {
                 $uploadResult = Upload::image($_FILES['avatar_file'], 'doctors');
@@ -137,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
                 if ($uploadResult['status'] === 'success') {
-                    $avatarPath = $uploadResult['path'];
+                    $uploadedAvatarPath = $uploadResult['path'];
                 }
             }
 
@@ -146,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'full_name' => trim($_POST['full_name'] ?? ''),
                 'academic_title' => trim($_POST['academic_title'] ?? ''),
                 'specialty' => trim($_POST['specialty'] ?? ''),
-                'avatar_url' => trim($_POST['avatar_url'] ?? '') ?: $avatarPath,
+                'avatar_url' => $uploadedAvatarPath ?? (trim($_POST['avatar_url'] ?? '') ?: $avatarPath),
                 'philosophy' => trim($_POST['philosophy'] ?? ''),
                 'joined_at' => $_POST['joined_at'] ?? null,
                 'is_active' => (int)($_POST['is_active'] ?? 1),
