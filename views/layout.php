@@ -5,6 +5,7 @@ Env::load();
 $baseUrl = Env::get('APP_BASE_URL', '');
 $user = $_SESSION['user'] ?? null;
 $isHomePage = $isHomePage ?? false;
+$sectionBase = $isHomePage ? '#' : $baseUrl . '/#';
 ?>
 <!DOCTYPE html>
 <html lang="vi" data-theme="light">
@@ -54,10 +55,11 @@ $isHomePage = $isHomePage ?? false;
                     </label>
                     <ul tabindex="0" class="menu dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                         <li><a href="<?= $baseUrl ?>/#home">Trang chủ</a></li>
-                        <li><a href="<?= $baseUrl ?>/#services">Dịch vụ</a></li>
-                        <li><a href="<?= $baseUrl ?>/#about">Giới thiệu</a></li>
-                        <li><a href="<?= $baseUrl ?>/#team">Đội ngũ</a></li>
-                        <li><a href="<?= $baseUrl ?>/#articles">Bài viết</a></li>
+                        <li><a href="<?= $sectionBase ?>services">Dịch vụ</a></li>
+                        <li><a href="<?= $sectionBase ?>about">Giới thiệu nhanh</a></li>
+                        <li><a href="<?= $sectionBase ?>team">Đội ngũ</a></li>
+                        <li><a href="<?= $sectionBase ?>articles">Bài viết</a></li>
+                        <li><a href="<?= $baseUrl ?>/index.php?page=about">Trang giới thiệu</a></li>
                     </ul>
                 </div>
     
@@ -77,11 +79,12 @@ $isHomePage = $isHomePage ?? false;
     
             <!-- DESKTOP MENU -->
             <nav class="hidden lg:flex items-center gap-1">
-                <a href="#home" class="btn btn-ghost btn-sm">Trang chủ</a>
-                <a href="#services" class="btn btn-ghost btn-sm">Dịch vụ</a>
-                <a href="#about" class="btn btn-ghost btn-sm">Giới thiệu</a>
-                <a href="#team" class="btn btn-ghost btn-sm">Đội ngũ</a>
-                <a href="#articles" class="btn btn-ghost btn-sm">Bài viết</a>
+                <a href="<?= $sectionBase ?>home" class="btn btn-ghost btn-sm">Trang chủ</a>
+                <a href="<?= $sectionBase ?>services" class="btn btn-ghost btn-sm">Dịch vụ</a>
+                <a href="<?= $sectionBase ?>about" class="btn btn-ghost btn-sm">Giới thiệu nhanh</a>
+                <a href="<?= $baseUrl ?>/index.php?page=about" class="btn btn-ghost btn-sm">Lịch sử</a>
+                <a href="<?= $sectionBase ?>team" class="btn btn-ghost btn-sm">Đội ngũ</a>
+                <a href="<?= $sectionBase ?>articles" class="btn btn-ghost btn-sm">Bài viết</a>
             </nav>
     
             <!-- RIGHT -->
@@ -169,14 +172,15 @@ $isHomePage = $isHomePage ?? false;
                 <h3 class="font-semibold mb-3">Liên kết nhanh</h3>
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <ul class="space-y-2">
-                        <li><a class="link" href="#home">Trang chủ</a></li>
-                        <li><a class="link" href="#services">Dịch vụ nổi bật</a></li>
-                        <li><a class="link" href="#pricing">Bảng giá</a></li>
+                        <li><a class="link" href="<?= $sectionBase ?>home">Trang chủ</a></li>
+                        <li><a class="link" href="<?= $sectionBase ?>services">Dịch vụ nổi bật</a></li>
+                        <li><a class="link" href="<?= $sectionBase ?>pricing">Bảng giá</a></li>
                     </ul>
                     <ul class="space-y-2">
-                        <li><a class="link" href="#about">Giới thiệu</a></li>
-                        <li><a class="link" href="#team">Đội ngũ bác sĩ</a></li>
-                        <li><a class="link" href="#articles">Tin tức & tư vấn</a></li>
+                        <li><a class="link" href="<?= $sectionBase ?>about">Giới thiệu</a></li>
+                        <li><a class="link" href="<?= $baseUrl ?>/index.php?page=about">Trang lịch sử</a></li>
+                        <li><a class="link" href="<?= $sectionBase ?>team">Đội ngũ bác sĩ</a></li>
+                        <li><a class="link" href="<?= $sectionBase ?>articles">Tin tức & tư vấn</a></li>
                     </ul>
                 </div>
             </div>
